@@ -4,6 +4,6 @@ Python tool that puts [Qualtrics](http://www.qualtrics.com/) survey data into a 
 ### Example
     import qual2db
     
-    s = qual2db.survey.Survey('{your survey id}')
+    s = qual2db.Survey('{your survey id}')
     s.align_with_sql()
     s.update_mysql()
