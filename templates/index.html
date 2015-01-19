@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<style type="text/css">
+
+.button_bar {
+	width:100px;		
+}
+
+body {
+}
+
+select {
+	width:300px;
+	height:200px;
+}
+
+.container {
+	margin-left:auto;
+	margin-right:auto;
+	width:750px;
+	padding-top:5px;
+	padding-left:20px;
+	padding-right:20px;
+	padding-bottom:20px;
+	text-align:center
+}
+
+form {
+	text-align:center;
+	margin-left:auto;
+	margin-right:auto;
+	width:100%;
+}
+
+td.menu {
+	background-color:#ADADAE;
+	cursor: pointer;
+}
+
+td.menu:hover {
+	background-color:#F0F0F2;
+	cursor: pointer;
+}
+
+</style>
+
+<script type="text/javascript">
+function SelectMoveRows(SS1,SS2)
+{
+    var SelID='';
+    var SelText='';
+    // Move rows from SS1 to SS2 from bottom to top
+    for (i=SS1.options.length - 1; i>=0; i--)
+    {
+        if (SS1.options[i].selected == true)
+        {
+            SelID=SS1.options[i].value;
+            SelText=SS1.options[i].text;
+            var newRow = new Option(SelText,SelID);
+            SS2.options[SS2.length]=newRow;
+            SS1.options[i]=null;
+        }
+    }
+    SelectSort(SS2);
+}
+function SelectSort(SelList)
+{
+    var ID='';
+    var Text='';
+    for (x=0; x < SelList.length - 1; x++)
+    {
+        for (y=x + 1; y < SelList.length; y++)
+        {
+            if (SelList[x].text > SelList[y].text)
+            {
+                // Swap rows
+                ID=SelList[x].value;
+                Text=SelList[x].text;
+                SelList[x].value=SelList[y].value;
+                SelList[x].text=SelList[y].text;
+                SelList[y].value=ID;
+                SelList[y].text=Text;
+            }
+        }
+    }
+}
+</script>
+
+</head>
+
+<body>
+<div class="container">
+<img src="http://www.calvin.edu/admin/csr/images/CSR_logo_web.png">
+<h1>Qual2DB: qualtrics reshaping tool.</h1>
+<table cellpadding="3" cellspacing="0" align="center">
+	<tr>
+		<td class="menu" onclick="alert('Page does not exist')">
+		Update/Add Surveys
+		</td>
+		<td>
+		</td>
+		<td class="menu" onclick="alert('Page does not exist')">
+		Rebuild Existing Surveys
+		</td>
+	</tr>
+</table>
+<h3>Select the survey(s) you want to process.</h3>
+<p>These are all the surveys available to the {{ username }} API account.</p>
+
+<form name="Example">
+<table border="0" cellpadding="3" cellspacing="0" align="center">
+	<tr>
+		<td>
+		<b>Available Surveys</b>
+		</td>
+		<td></td>
+		<td>
+		<b>In MySQL</b>
+		</td>
+	
+	
+	</tr>
+	<tr align="center">
+		<td align="center">
+			<select name="Features" multiple >
+			{% for option in options %}
+    		<option value=" {{ option.qid }} ">{{ option.name }}</option>
+			{% endfor %}
+			</select>
+		</td>
+		<td>
+		<input type="Button" value="Add >>" style="width:100px" onClick="SelectMoveRows(document.Example.Features,document.Example.FeatureCodes)">
+		<br>
+		<input type="Button" value=" << Remove" style="width:100px" onClick="SelectMoveRows(document.Example.FeatureCodes,document.Example.Features)">
+		</td>
+		<td align="center">
+			<select name="FeatureCodes" multiple>
+			{% for selection in selected %}
+    		<option value=" {{ selection.qid }} ">{{ selection.name }}</option>
+			{% endfor %}
+			</select>
+		</td>
+</tr>
+</table>
+<p>Hold down the Ctrl (windows) / Command (Mac) button to select multiple options.</p>
+</form>
+
+<button>Update</button>
+</div>
+</body>
+</html>
+
+
+
+
