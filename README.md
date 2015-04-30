@@ -6,3 +6,5 @@ A python package that pulls survey data from [Qualtrics](http://www.qualtrics.co
     
     s = qual2db.survey('{your survey id}')
     s.update_sql()
+
+See the wiki for the complete documentation.
