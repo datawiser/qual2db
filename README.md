@@ -3,11 +3,9 @@ A python package that pulls survey data from [Qualtrics](http://www.qualtrics.co
 
 ### Example
 
-'''python
-import qual2db
+    import qual2db
     
-s = qual2db.survey('{your survey id}')
-s.update_sql()
-'''
+    s = qual2db.survey('{your survey id}')
+    s.update_sql()
 
 See the [wiki](https://github.com/calvincsr/qual2db/wiki) for complete documentation.
