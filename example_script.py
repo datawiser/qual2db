@@ -13,4 +13,4 @@ from qual2db import sqlInterface, qualInterface, survey
 ##s.describe()
 
 ## Uncomment this function to add the survey to MySQL/update new responses:
-##s.update_sql.py()
+##s.update_sql.()
