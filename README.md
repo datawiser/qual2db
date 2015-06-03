@@ -1,5 +1,5 @@
 # qual2db
-A python package that pulls survey data from [Qualtrics](http://www.qualtrics.com/) and transforms it in to a multi-table relational database (Surveys, Blocks, Questions, Choices, Answers, Respondents, Responses). Originally designed to replicate the useful data structure provided by the Inquisite survey system.
+A python package that pulls survey data from [Qualtrics](http://www.qualtrics.com/) and transforms it in to a multi-table relational database (Surveys, Blocks, Questions, Choices, Answers, Respondents, Responses).
 
 ### Example
 
