@@ -1,7 +1,12 @@
 # qual2db
 A python package that pulls survey data from [Qualtrics](http://www.qualtrics.com/) and transforms it in to a multi-table relational database (Surveys, Blocks, Questions, Choices, Answers, Respondents, Responses).
 
-### Example
+## Start
+To get started, download the files and run setup.py to configure the connections to both MySQL and Qualtrics.
+
+
+### Command Line Tips
+If using the command line, here is an example of how to:
 
     import qual2db
     
