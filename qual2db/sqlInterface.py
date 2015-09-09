@@ -40,7 +40,7 @@ class sqlInterface(object):
                               database = config.sqlDB)
         except:
             print 'Error: Cannot connect to mysql'
-            return False       
+            return False
         
         self.cnx = cnx
 
@@ -172,12 +172,21 @@ class sqlInterface(object):
     ############################################################################
 
     def upload_survey(self,survey_object):
-        '''Adds a survey record given a survey object. Returns the MySQL id.'''
+        '''Adds (or updates) a survey given a survey object. Returns the MySQL id.'''
 
         cur = self.cnx.cursor()
         sqlid = self.get_survey_id(survey_object.qid)
 
         if sqlid:
+            qry = ('UPDATE surveys SET '
+                   'survey_name="'+survey_object.name+'",'
+                   'owner="'+survey_object.owner+'",'
+                   'status='+survey_object.status+' '
+                   'WHERE survey_id='+str(sqlid))
+
+            cur.execute(qry)
+            self.cnx.commit()
+            
             return sqlid
     
         qry = ('INSERT INTO surveys (survey_name,survey_qid,'
@@ -696,6 +705,5 @@ class sqlInterface(object):
         self.cnx.commit()
 
         print 'MySQL configured.'
-
 
 

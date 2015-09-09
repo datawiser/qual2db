@@ -23,4 +23,3 @@ sqlPassword = config.get('MySQL Credentials','sqlPassword')
 sqlHost = config.get('MySQL Credentials','sqlHost')
 sqlDB = config.get('MySQL Credentials','sqlDB')
 
-

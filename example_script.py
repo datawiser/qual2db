@@ -1,3 +1,5 @@
+## If you would like to use the command line to complete the Qual2DB tasks,
+## here are some common functions that can be used.
 from qual2db import sqlInterface, qualInterface, survey
 
 ## Uncomment this function to display all the surveys in the Qualtrics API account:

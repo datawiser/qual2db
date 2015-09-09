@@ -139,4 +139,3 @@ class survey(object):
         self.qualInterface = qualInterface()
         
         self.refresh()
-

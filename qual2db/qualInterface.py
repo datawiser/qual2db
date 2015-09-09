@@ -11,7 +11,7 @@ import urllib
 import time
 
 # Local modules
-import config 
+import config
 
 class qualInterface(object):
     '''The interface object for communication with the Qualtrics API.'''
@@ -87,11 +87,11 @@ class qualInterface(object):
 
         if responses is None:
             responses = 0
-            
+
         survey_info = {'name':name,
                        'responses':int(responses),
                        'status':status}
-                
+
         return survey_info
     
     def getSchema(self,qid,sqlid=None,debug=False):
@@ -360,7 +360,7 @@ class qualInterface(object):
                         answertext = question.text
                         
                     # Text: text entry or descriptive text
-                    elif (question_type == 'TE' 
+                    elif (question_type == 'TE'
                           or question_type=='Nominal' 
                           or question_type=='DB'):
 
@@ -369,7 +369,7 @@ class qualInterface(object):
                         answertext = question.text
 
                     # Matrix: Bipolar
-                    elif (question_type == 'Matrix' 
+                    elif (question_type == 'Matrix'
                           and question_selector == 'Biploar'):
 
                         choice_qid = parsetag[1]
@@ -401,6 +401,13 @@ class qualInterface(object):
                             choice_qid = parsetag[1]
                             answer_qid = parsetag[2]
                             answertext = question.text
+                            
+                    # Matrix: Text Entry
+                    elif (question_type == 'Matrix' 
+                          and question_selector == 'TE'):
+                        choice_qid = parsetag[1]
+                        answer_qid = parsetag[2]
+                        answertext = question.text
 
                     # Anything else
                     else:
@@ -432,7 +439,6 @@ class qualInterface(object):
 
         print 'PROCESS TIME:',round(time.time() - t0,2), 'seconds.'
         return responses
-
 
 
 
