@@ -6,7 +6,7 @@ To get started, download the files and run setup.py to configure the connections
 
 
 ### Command Line Tips
-If using the command line, here is an example of how to:
+If using the command line, here is an example of how to run qual2db:
 
     import qual2db
     
