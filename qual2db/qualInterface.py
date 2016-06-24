@@ -246,9 +246,12 @@ class qualInterface(object):
         if sqlid is not None:
             surveyid = sqlid
 
-        # These are all the fields that are being excluded from the response set.
+        # These are all the default fields that are being excluded from the response set, because they are included in
+        # the respondents table
         headers = ['ResponseID','ExternalDataReference','Name','EmailAddress','IPAddress','Status','StartDate','ResponseSet',
                     'EndDate','Finished','Score','FirstName','LastName']
+        
+        # if there are questions passed through the exclude parameter they will be added here
         if exclude:
             headers = headers+exclude
 
