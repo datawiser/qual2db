@@ -579,6 +579,7 @@ class sqlInterface(object):
         CREATE TABLE `questions` (
         `question_id` INT(11) NOT NULL AUTO_INCREMENT,
         `survey_id` INT(11) NULL DEFAULT '0',
+        `block_id` INT(11) NULL DEFAULT '0',
         `question_qid` VARCHAR(50) NULL DEFAULT '0',
         `data_type` VARCHAR(2) NULL DEFAULT '0',
         `question_description` TEXT NULL,
