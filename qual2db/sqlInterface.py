@@ -5,7 +5,7 @@
 # that it uses to interface with the MySQL database
 
 # MySQL connector
-import MySQLdb as sql
+import mysql.connector as sql
 
 # Standard python library
 import datetime
