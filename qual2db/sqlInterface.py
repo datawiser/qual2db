@@ -10,7 +10,6 @@ import mysql.connector as sql
 # Standard python library
 import datetime
 import time
-#import sys
 
 # Local modules
 import config
