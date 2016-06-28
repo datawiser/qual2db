@@ -456,26 +456,13 @@ class sqlInterface(object):
 
         return result
 
-    def check_for_schema(self,survey_object):
-        '''Checks to see if there is data for all schema tables.'''
-
-        checks=[]
-        checks.append(check_for_questions(survey_object))
-        checks.append(check_for_choices(survey_object))
-        checks.append(check_for_answers(survey_object))
-
-        if False in checks:
-            return False
-        else:
-            return True
-
-    def check_for_blocks(self,survey_object):
+    def check_for_blocks(self,sqlid):
         '''Checks if all the questions have been loaded to MySQL'''
 
         cur = self.cnx.cursor()
 
         qry = ('SELECT COUNT(*) FROM blocks '
-                 'WHERE survey_id ='+str(survey_object.sqlid))
+                 'WHERE survey_id ='+str(sqlid))
 
         cur.execute(qry)
         result = cur.fetchone()[0]
@@ -485,29 +472,29 @@ class sqlInterface(object):
         else:
             return False
 
-    def check_for_questions(self,survey_object):
+    def check_for_questions(self,sqlid):
         '''Checks if all the questions have been loaded to MySQL'''
 
         cur = self.cnx.cursor()
 
         qry = ('SELECT COUNT(*) FROM questions '
-                 'WHERE survey_id ='+str(survey_object.sqlid))
+                 'WHERE survey_id ='+str(sqlid))
 
         cur.execute(qry)
         result = cur.fetchone()[0]
 
-        if int(result) == int(len(survey_object.schema['schema'])):
+        if int(result) >0:
             return True
         else:
             return False
 
-    def check_for_choices(self,survey_object):
+    def check_for_choices(self,sqlid):
         '''Checks if all the choices have been loaded to MySQL'''
 
         cur = self.cnx.cursor()
 
         qry = ('SELECT COUNT(*) FROM choices '
-                 'WHERE survey_id = '+str(survey_object.sqlid))
+                 'WHERE survey_id = '+str(sqlid))
 
         cur.execute(qry)
         result = cur.fetchone()[0]
@@ -517,13 +504,13 @@ class sqlInterface(object):
         else:
             return False
 
-    def check_for_answers(self,survey_object):
+    def check_for_answers(self,sqlid):
         '''Checks if all the answers have been loaded to MySQL'''
 
         cur = self.cnx.cursor()
 
         qry = ('SELECT COUNT(*) FROM answers '
-                 'WHERE survey_id ='+str(survey_object.sqlid))
+                 'WHERE survey_id ='+str(sqlid))
 
         cur.execute(qry)
         result = cur.fetchone()[0]
@@ -532,6 +519,21 @@ class sqlInterface(object):
             return True
         else:
             return False
+
+    def check_for_schema(self,sqlid):
+        '''Checks to see if there is data for all schema tables.'''
+
+        # this function needs work
+
+        checks=[]
+        checks.append(self.check_for_questions(sqlid))
+        checks.append(self.check_for_choices(sqlid))
+        checks.append(self.check_for_answers(sqlid))
+
+        if False in checks:
+            return False
+        else:
+            return True
 
     def configure_db(self,overwrite=False):
         '''Sets up all the tables in MySQL.'''

@@ -84,7 +84,7 @@ class survey(object):
         self.respondents = self.qualInterface.processRespondents(self,self.sqlid)['respondents']
 
         # this is a list of respondents in MySQL
-        respondent_list = [x for ]
+        # respondent_list = [x[0] for x in self.respondents]
 
         if len(self.respondents) > 0:
 
