@@ -99,6 +99,20 @@ class sqlInterface(object):
 
         return int(result)
 
+    def getRespondentList(self,sqlid):
+        '''Returns a list of respondent ids to scan for duplicates.'''
+
+        cur = self.cnx.cursor()
+
+        qry = ('SELECT respondent_qid '
+                'FROM respondents '
+                'WHERE survey_id ='+ str(sqlid))
+
+        cur.execute(qry)
+        respondent_list = cur.fetchall()
+
+        return respondent_list
+
     def stamp_survey(self,sqlid, field='last_refresh'):
         '''Time stamps a survey, given a date field.'''
 

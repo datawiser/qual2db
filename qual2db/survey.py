@@ -80,8 +80,11 @@ class survey(object):
         #refresh_date = self.sqlInterface.get_refresh_date(self.sqlid)
 
         print 'Gathering qualtrics data.'
-        self.data = self.qualInterface.getData(self,last_response,debug=debug)
+        self.data = self.qualInterface.getData(self,startdate=last_response,debug=debug)
         self.respondents = self.qualInterface.processRespondents(self,self.sqlid)['respondents']
+
+        # this is a list of respondents in MySQL
+        respondent_list = [x for ]
 
         if len(self.respondents) > 0:
 

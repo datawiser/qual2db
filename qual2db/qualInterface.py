@@ -194,7 +194,8 @@ class qualInterface(object):
         '''Gets survey data. Date format:YYYY-MM-DD hh:mm:ss.'''
 
         # The Legacy Response Data format is what qual2db relies on for interpreting survey data
-        survey_data = self.request(survey_object.qid,'getLegacyResponseData',startdate,enddate,respondent=respondent,limit=limit,debug=debug)        
+        survey_data = self.request(survey_object.qid,'getLegacyResponseData',startdate,enddate,
+            respondent=respondent,limit=limit,debug=debug)        
         
         return survey_data
 
