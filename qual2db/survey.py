@@ -62,9 +62,7 @@ class survey(object):
         self.schema = self.qualInterface.getSchema(self.qid,self.sqlid,debug=debug)
 
         self.block_key = self.sqlInterface.upload_blocks(self)
-        
         self.question_key = self.sqlInterface.upload_questions(self)
-
         self.choice_key = self.sqlInterface.upload_choices(self)
         self.answer_key = self.sqlInterface.upload_answers(self)
 
