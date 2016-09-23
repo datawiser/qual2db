@@ -6,6 +6,7 @@
 
 # Standard python library
 import xml.etree.ElementTree as ET
+import json
 import urllib2
 import urllib
 import time
@@ -15,6 +16,23 @@ import config
 
 class qualInterface(object):
     '''The interface object for communication with the Qualtrics API.'''
+
+    def api_request(self,call='surveys',debug=False):
+        url = 'https://uwmadison.co1.qualtrics.com/API/v3/'+call
+        header = {'X-API-TOKEN': config.Token} 
+
+        request = urllib2.Request(url,None,header)
+        response = urllib2.urlopen(request)
+
+        # display info if debug is True
+        if debug is True:
+            print response.getcode() #print status code
+            print response.headers.getheader('content-type')
+        
+        # handling xml data
+        #xml = ET.fromstring(response.read())
+
+        return json.load(response)
 
     def request(self,qid=None,call=None,startdate=None,enddate=None,respondent=None,limit=None,debug=False):
         '''Makes a REST call to Qualatrics. Returns an xml.etree object.'''
@@ -40,8 +58,11 @@ class qualInterface(object):
             response = urllib2.urlopen(request)
         except urllib2.HTTPError, error:
             response = error.read()
-        
-        url = response.geturl()+request.data
+
+        try:
+            url = response.geturl()+request.data
+        except:
+            print response
 
         # If debug is set to True, the url is printed
         if debug == True:
@@ -53,29 +74,34 @@ class qualInterface(object):
     #################################################
     # Functions that get information about surveys
     #################################################
+    
+    def listSurveys(self,debug=False):
+        '''Creates a list of surveys the API account has access to.'''
+
+        data = self.api_request(call='surveys',debug=debug)
+
+        survey_list = []
+        for survey in data['result']['elements']:
+            qid = survey['id']
+            name = survey['name']
+            active = survey['isActive']
+
+            survey_list.append([qid,name,active])
+
+        return survey_list
 
     def printSurveys(self):
         '''Lists surveys available to the API account.'''
 
-        l = self.listSurveys()
+        surveys = self.listSurveys()
 
-        for i in l:
-            print i[0], i[1][:30]
+        for survey in surveys:
+            print survey[0], survey[1], survey[2]
 
-    def listSurveys(self):
-        '''Creates a list of surveys the API account has access to.'''
-
-        xml = self.request(call='getSurveys')
-
-        survey_list = []
-        for survey in xml.find('Result/Surveys'):
-            qid = survey.find('SurveyID').text
-            surveyname = survey.find('SurveyName').text
-
-            survey_list.append([qid,surveyname])
-
-        return survey_list 
-            
+########################################################################################################################
+# THE UPDATE LINE
+########################################################################################################################
+      
     def getInfo(self,qid,debug=False):
         '''Creates a dictionary with basic details about a given survey.'''
         
