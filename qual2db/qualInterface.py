@@ -32,11 +32,7 @@ class qualInterface(object):
         # handling xml data
         #xml = ET.fromstring(response.read())
 
-        return json.load(response)
-
-    #################################################
-    # Functions that get information about surveys
-    #################################################
+        return json.load(response)['result']
     
     def listSurveys(self,debug=False):
         '''Creates a list of surveys the API account has access to.'''
@@ -44,7 +40,7 @@ class qualInterface(object):
         data = self.api_request(call='surveys',debug=debug)
 
         survey_list = []
-        for survey in data['result']['elements']:
+        for survey in data['elements']:
             qid = survey['id']
             name = survey['name']
             active = survey['isActive']
@@ -61,15 +57,10 @@ class qualInterface(object):
         for survey in surveys:
             print survey[0], survey[1], survey[2]
 
-########################################################################################################################
-# THE UPDATE LINE
-########################################################################################################################
-      
     def getInfo(self,qid,debug=False):
         '''Creates a dictionary with basic details about a given survey.'''
         
         data = self.api_request(call='surveys/'+qid,debug=debug)
-        data = data['result']
 
         name = data['name']
         responses = data['responseCounts']
@@ -78,11 +69,31 @@ class qualInterface(object):
         if responses is None:
             responses = 0
 
-        info = {'name'     :name,
-                       'responses':responses,
-                       'active'   :active}
+        info = {'name':name,'responses':responses,'active':active}
 
         return info
+
+########################################################################################################################
+# FUNCTIONS FOR PULLING AND PROCCESSING DATA
+########################################################################################################################
+    
+    def getBlocks(self,qid,debug=False):
+        '''Gets the block structure from Qualtrics.'''
+
+        data = self.api_request(call='surveys/'+qid,debug=debug)
+
+        blocks = []
+        for block_id in data['blocks']:
+            block_desc = data['blocks'][block_id]['description']
+            blocks.append([block_id,block_desc])
+
+        return blocks
+
+########################################################################################################################
+# THE UPDATE LINE
+########################################################################################################################
+    
+
     
     def getSchema(self,qid,sqlid=None,debug=False):
         '''Gets a survey's schema.'''
