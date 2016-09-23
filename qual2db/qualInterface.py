@@ -34,43 +34,6 @@ class qualInterface(object):
 
         return json.load(response)
 
-    def request(self,qid=None,call=None,startdate=None,enddate=None,respondent=None,limit=None,debug=False):
-        '''Makes a REST call to Qualatrics. Returns an xml.etree object.'''
-
-        payload = {'Request':call, 'SurveyID': qid,'Format':'XML','Password':config.Password,
-               'Token':config.Token,'Version':config.Version,'User':config.User}
-
-        # Set other call parameters
-        if call == 'getLegacyResponseData':
-            payload['ExportQuestionIDs']='1'
-            #payload['UnansweredRecode']='-99'
-        if respondent is not None:
-            payload['RespondentID']= respondent
-        if limit is not None:
-            payload['Limit']= limit
-        if startdate is not None:
-            payload['StartDate']= startdate
-        if enddate is not None:
-            payload['EndDate']= enddate
-
-        try:
-            request = urllib2.Request(config.baseurl, urllib.urlencode(payload))
-            response = urllib2.urlopen(request)
-        except urllib2.HTTPError, error:
-            response = error.read()
-
-        try:
-            url = response.geturl()+request.data
-        except:
-            print response
-
-        # If debug is set to True, the url is printed
-        if debug == True:
-            print url
-
-        xml = ET.fromstring(response.read())
-        return xml
-
     #################################################
     # Functions that get information about surveys
     #################################################
@@ -105,20 +68,21 @@ class qualInterface(object):
     def getInfo(self,qid,debug=False):
         '''Creates a dictionary with basic details about a given survey.'''
         
-        xml = self.request(qid,'getSurveyName',debug=debug)
-     
-        responses = xml.find('Result/responses').text
-        name = xml.find('Result/SurveyName').text
-        status = xml.find('Result/SurveyStatus').text
+        data = self.api_request(call='surveys/'+qid,debug=debug)
+        data = data['result']
+
+        name = data['name']
+        responses = data['responseCounts']
+        active = data['isActive']
 
         if responses is None:
             responses = 0
 
-        survey_info = {'name':name,
-                       'responses':int(responses),
-                       'status':status}
+        info = {'name'     :name,
+                       'responses':responses,
+                       'active'   :active}
 
-        return survey_info
+        return info
     
     def getSchema(self,qid,sqlid=None,debug=False):
         '''Gets a survey's schema.'''
