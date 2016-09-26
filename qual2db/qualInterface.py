@@ -10,6 +10,7 @@ import json
 import urllib2
 import urllib
 import time
+import zipfile
 
 import requests
 
@@ -19,7 +20,7 @@ import config
 class qualInterface(object):
     '''The interface object for communication with the Qualtrics API.'''
 
-    def api_request(self,call='surveys',method='GET',parms=None,debug=False):
+    def api_request(self,call='surveys',method='GET',parms=None,export=False,debug=False):
         
         url = 'https://uwmadison.co1.qualtrics.com/API/v3/'+call
         
@@ -33,35 +34,22 @@ class qualInterface(object):
 
         response = requests.request(method,url,data=parms,headers=headers)
 
+        # if the request is marked as a data download, write it to a zip file and extract it
+        if export:
+
+            qid = call.replace('responseexports/','').replace('/file','')
+            qid = qid.replace(call,'')
+            path = config.download_directory+qid
+
+            with open(path+'.zip', 'w') as f:
+                for chunk in response.iter_content(chunk_size=1024):
+                    f.write(chunk)
+            zipfile.ZipFile(path+'.zip').extractall(path)
+
         try:
             data = response.json()
         except:
             return response.text
-
-        return data['result']
-
-    def api_requestOLD(self,call='surveys',parms=None,debug=False):
-        
-        url = 'https://uwmadison.co1.qualtrics.com/API/v3/'+call
-        header = {
-        'x-api-token': config.Token,
-        }
-
-        if parms:
-            parms = json.dumps(parms)
-            header['content-type'] = 'application/json'
-
-        request = urllib2.Request(url,parms,header)
-        response = urllib2.urlopen(request)
-
-        if debug:
-            print response.getcode() #print status code
-            print response.headers.getheader('content-type')
-
-        try:
-            data = json.load(response)
-        except:
-            return data
 
         return data['result']
     
@@ -115,7 +103,7 @@ class qualInterface(object):
         return schema
 
     def getData(self,qid,last_response=None,debug=False):
-        '''Gets survey data. Date format:YYYY-MM-DD hh:mm:ss.'''
+        '''Gets survey data.'''
 
         parms = {
         "surveyId" : qid,
@@ -136,19 +124,9 @@ class qualInterface(object):
             complete = progress['percentComplete']
 
         download_call = 'responseexports/'+export_id+'/file'
-        download = self.api_request(call=download_call,method='GET',debug=debug)
+        download = self.api_request(call=download_call,method='GET',export=True,debug=debug)
 
-        d = download.decode('utf-8')
-
-        with open('RequestFile.txt', "w") as f:
-            for chunk in d.iter_content(chunk_size=1024):
-                f.write(chunk)
-
-        return download
-
-            
-
-
+        return True
 
 ########################################################################################################################
 # THE UPDATE LINE

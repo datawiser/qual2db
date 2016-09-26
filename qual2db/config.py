@@ -12,6 +12,8 @@ config_file = os.path.join(package_directory, 'config.ini')
 config = ConfigParser.ConfigParser()
 config.read(config_file)
 
+download_directory = config.get('Basic','download_directory')
+
 baseurl = config.get('Qualtrics Credentials','baseurl')
 User = config.get('Qualtrics Credentials','User')
 Password = config.get('Qualtrics Credentials','Password')
