@@ -11,6 +11,7 @@ import urllib2
 import urllib
 import time
 import zipfile
+import os
 
 import requests
 
@@ -38,13 +39,14 @@ class qualInterface(object):
         if export:
 
             qid = call.replace('responseexports/','').replace('/file','')
-            qid = qid.replace(call,'')
             path = config.download_directory+qid
 
             with open(path+'.zip', 'w') as f:
                 for chunk in response.iter_content(chunk_size=1024):
                     f.write(chunk)
             zipfile.ZipFile(path+'.zip').extractall(path)
+
+            return path
 
         try:
             data = response.json()
@@ -124,15 +126,16 @@ class qualInterface(object):
             complete = progress['percentComplete']
 
         download_call = 'responseexports/'+export_id+'/file'
-        download = self.api_request(call=download_call,method='GET',export=True,debug=debug)
+        download_path = self.api_request(call=download_call,method='GET',export=True,debug=debug)
 
-        return True
+        data_file = download_path+'/'+os.listdir(download_path)[0]
+        data = open(data_file,'r')
+
+        return json.load(data)
 
 ########################################################################################################################
 # THE UPDATE LINE
 ########################################################################################################################
-
-
 
     ####################################################
     # Functions that process Qualtrics data
