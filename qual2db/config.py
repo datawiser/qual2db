@@ -11,11 +11,8 @@ config_file = os.path.join(package_directory, 'config.ini')
 
 config = ConfigParser.ConfigParser()
 config.read(config_file)
-<<<<<<< HEAD:qual2db/config.py
 
 download_directory = config.get('Basic','download_directory')
-=======
->>>>>>> 6f8514de0ce2a484f7e572b2f7eeb0a9ad993d98:qual2db/config.py
 
 baseurl = config.get('Qualtrics Credentials','baseurl')
 User = config.get('Qualtrics Credentials','User')
