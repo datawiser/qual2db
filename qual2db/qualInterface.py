@@ -22,7 +22,7 @@ class qualInterface(object):
 
     def api_request(self,call='surveys',method='GET',parms=None,export=False,debug=False):
         
-        url = 'https://uwmadison.co1.qualtrics.com/API/v3/'+call
+        url = config.baseurl+call
         
         headers = {
         'x-api-token': config.Token,
