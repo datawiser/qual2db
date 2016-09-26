@@ -11,28 +11,59 @@ import urllib2
 import urllib
 import time
 
+import requests
+
 # Local modules
 import config
 
 class qualInterface(object):
     '''The interface object for communication with the Qualtrics API.'''
 
-    def api_request(self,call='surveys',debug=False):
+    def api_request(self,call='surveys',method='GET',parms=None,debug=False):
+        
         url = 'https://uwmadison.co1.qualtrics.com/API/v3/'+call
-        header = {'X-API-TOKEN': config.Token} 
+        
+        headers = {
+        'x-api-token': config.Token,
+        'content-type' : 'application/json'
+        }
 
-        request = urllib2.Request(url,None,header)
+        if parms:
+            parms = json.dumps(parms)
+
+        response = requests.request(method,url,data=parms,headers=headers)
+
+        try:
+            data = response.json()
+        except:
+            return response.text
+
+        return data['result']
+
+    def api_requestOLD(self,call='surveys',parms=None,debug=False):
+        
+        url = 'https://uwmadison.co1.qualtrics.com/API/v3/'+call
+        header = {
+        'x-api-token': config.Token,
+        }
+
+        if parms:
+            parms = json.dumps(parms)
+            header['content-type'] = 'application/json'
+
+        request = urllib2.Request(url,parms,header)
         response = urllib2.urlopen(request)
 
-        # display info if debug is True
-        if debug is True:
+        if debug:
             print response.getcode() #print status code
             print response.headers.getheader('content-type')
-        
-        # handling xml data
-        #xml = ET.fromstring(response.read())
 
-        return json.load(response)['result']
+        try:
+            data = json.load(response)
+        except:
+            return data
+
+        return data['result']
     
     def listSurveys(self,debug=False):
         '''Creates a list of surveys the API account has access to.'''
@@ -50,155 +81,80 @@ class qualInterface(object):
         return survey_list
 
     def printSurveys(self):
-        '''Lists surveys available to the API account.'''
+        '''Quickly lists surveys available to the API account.'''
 
         surveys = self.listSurveys()
 
         for survey in surveys:
             print survey[0], survey[1], survey[2]
 
+    # This function should be in the survey object, but I am leaving it here
+    # so that the qualInterface can be use to see info about surveys.
     def getInfo(self,qid,debug=False):
-        '''Creates a dictionary with basic details about a given survey.'''
+        '''Quickly creates a dictionary with basic details about a given survey.'''
         
-        data = self.api_request(call='surveys/'+qid,debug=debug)
+        schema = self.api_request(call='surveys/'+qid,debug=debug)
 
-        name = data['name']
-        responses = data['responseCounts']
-        active = data['isActive']
-
-        if responses is None:
-            responses = 0
+        name = schema['name']
+        responses = schema['responseCounts']
+        active = schema['isActive']
 
         info = {'name':name,'responses':responses,'active':active}
 
         return info
 
 ########################################################################################################################
-# FUNCTIONS FOR PULLING AND PROCCESSING DATA
+# FUNCTIONS FOR GETTING DATA
 ########################################################################################################################
-    
-    def getBlocks(self,qid,debug=False):
-        '''Gets the block structure from Qualtrics.'''
 
-        data = self.api_request(call='surveys/'+qid,debug=debug)
+    def getSchema(self,qid,debug=False):
+        '''Downloads the schema dictionary for a given survey'''
+        
+        schema = self.api_request(call='surveys/'+qid,debug=debug)
 
-        blocks = []
-        for block_id in data['blocks']:
-            block_desc = data['blocks'][block_id]['description']
-            blocks.append([block_id,block_desc])
+        return schema
 
-        return blocks
+    def getData(self,qid,last_response=None,debug=False):
+        '''Gets survey data. Date format:YYYY-MM-DD hh:mm:ss.'''
+
+        parms = {
+        "surveyId" : qid,
+        "format": "json"
+        }
+
+        if last_response:
+            parms['lastResponseId'] = last_response
+
+        print 'Downloading data.'
+        data = self.api_request(call='responseexports/',method='POST',parms=parms,debug=debug)
+        export_id = data['id']
+
+        complete = 0
+        while complete < 100:
+
+            progress = self.api_request(call='responseexports/'+export_id,method='GET',debug=debug)
+            complete = progress['percentComplete']
+
+        download_call = 'responseexports/'+export_id+'/file'
+        download = self.api_request(call=download_call,method='GET',debug=debug)
+
+        d = download.decode('utf-8')
+
+        with open('RequestFile.txt', "w") as f:
+            for chunk in d.iter_content(chunk_size=1024):
+                f.write(chunk)
+
+        return download
+
+            
+
+
 
 ########################################################################################################################
 # THE UPDATE LINE
 ########################################################################################################################
-    
 
-    
-    def getSchema(self,qid,sqlid=None,debug=False):
-        '''Gets a survey's schema.'''
-        
-        xml = self.request(qid,call='getSurvey',debug=debug)
 
-        # This is for replacing qid with sqlid in the schema
-        if sqlid is not None:
-            qid = sqlid
-
-        name = xml.find('SurveyName').text
-        owner = xml.find('OwnerID').text
-        status = xml.find('isActive').text
-        creation = xml.find('CreationDate').text
-        
-        alist = []
-        qlist = []
-        clist = []
-        blist = []
-
-        # This will contain the master key for blocks and questions
-        bkey = []
-
-        # Getting all the Block information this will be added to each Question item
-        for item in xml.findall('Blocks/Block'):
-            bname = item.get('Description')
-            bid = item.get('ID')
-
-            for question in item.findall('BlockElements/Question'):
-                elementid = question.get('QuestionID')
-                bkey.append([bid,elementid])
-
-            blist.append([qid,bid,bname])
-
-        for item in xml.findall('Questions/Question'):
-
-            quid = item.get('QuestionID')
-            qtype = item.find('Type').text
-            qselector = item.find('Selector').text
-            qsubselector = item.find('SubSelector').text
-            qtag = item.find('ExportTag').text
-            qdesc = item.find('QuestionDescription').text
-            qtext = item.find('QuestionText').text
-
-            # Finding the related block
-            parseqid = quid.split('_')[-1].split('#')[0]
-            bid = [x[0] for x in bkey if x[1]==parseqid][0]
-
-            # Processing the choices for this question
-            for choice in item.findall('Choices/Choice'):
-                cid = choice.get('ID') # This is the qualtrics assigned id
-                crecode = choice.get('Recode')
-                cdesc = choice.find('Description').text
-                
-                textentry = choice.get('TextEntry')
-                if textentry == None:
-                    textentry = 0
-                clist.append([qid,quid,cid,crecode,cdesc,textentry])
-
-            # Processing the answers
-            for answer in item.findall('Answers/Answer'):
-                aid = answer.get('ID')
-                arecode = answer.get('Recode')
-                adesc = answer.find('Description').text
-                alist.append([qid,quid,aid,arecode,adesc])
-           
-            # Adding the base question
-            append = [qid,quid,'Q',qtype,qselector,qsubselector,qtag,qdesc,qtext,bid]
-            qlist.append(append)
-
-        # Getting the embedded data    
-        edlist = []    
-        for item in xml.findall('EmbeddedData/Field'):
-            
-            edtype = item.get('Type')
-            edfield = item.find('Name').text
-            append = [edfield,'ED',edtype,'','',edfield,'','']
-            if sqlid is not None:
-                append = [sqlid]+append
-            edlist.append(append)
-
-        schema = edlist+qlist
-            
-        survey_schema = {'name':name,
-                         'owner':owner,
-                         'status':status,
-                         'creation':creation,
-                         'answers':alist,
-                         'choices':clist,
-                         'ED': edlist,
-                         'schema':schema,
-                         'questions':qlist,
-                         'blocks':blist
-                         }
-
-        return survey_schema
-
-    def getData(self,survey_object,startdate=None,enddate=None,respondent=None,limit=None,debug=False):
-        '''Gets survey data. Date format:YYYY-MM-DD hh:mm:ss.'''
-
-        # The Legacy Response Data format is what qual2db relies on for interpreting survey data
-        survey_data = self.request(survey_object.qid,'getLegacyResponseData',startdate,enddate,
-            respondent=respondent,limit=limit,debug=debug)        
-        
-        return survey_data
 
     ####################################################
     # Functions that process Qualtrics data
