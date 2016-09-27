@@ -25,10 +25,12 @@ class sqlInterface(object):
         except:
             self.cnx = None
 
-        cnx = sql.connect(user = config.sqlUser,
-                            passwd = config.sqlPassword,
-                            host = config.sqlHost,
-                            db = config.sqlDB)
+        cnx = sql.connect(
+            user = config.sqlUser,
+            passwd = config.sqlPassword,
+            host = config.sqlHost,
+            db = config.sqlDB
+            )
 
         self.cnx = cnx
 

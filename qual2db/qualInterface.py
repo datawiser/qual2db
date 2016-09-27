@@ -39,11 +39,12 @@ class qualInterface(object):
         if export:
 
             qid = call.replace('responseexports/','').replace('/file','')
-            path = config.download_directory+qid
+            path = config.download_directory+qid+'_data'
 
-            with open(path+'.zip', 'w') as f:
+            with open(path+'.zip', 'wb') as f:
                 for chunk in response.iter_content(chunk_size=1024):
                     f.write(chunk)
+
             zipfile.ZipFile(path+'.zip').extractall(path)
 
             return path
@@ -127,7 +128,7 @@ class qualInterface(object):
         download_call = 'responseexports/'+export_id+'/file'
         download_path = self.api_request(call=download_call,method='GET',export=True,debug=debug)
 
-        data_file = download_path+'/'+os.listdir(download_path)[0]
+        data_file = download_path+'\\'+os.listdir(download_path)[0]
         data = open(data_file,'r')
 
         return json.load(data)

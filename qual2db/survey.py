@@ -12,6 +12,18 @@ from qualInterface import qualInterface
 class survey(object):
     '''The Qualtrics survey object.'''
 
+    def __init__(self, qid,debug=False):
+        '''This is the initialization function.'''
+
+        self.sqlInterface = sqlInterface()
+        self.qualInterface = qualInterface()
+
+        self.qid = qid
+        self.schema = self.qualInterface.getSchema(self.qid,debug=debug)
+        self.name = self.schema['name']
+        self.responses = self.schema['responseCounts']
+        self.active = self.schema['isActive']
+
 ########################################################################################################################
 
     # def refresh(self,debug=False):
@@ -134,15 +146,5 @@ class survey(object):
     #     self.sqlInterface.delete_survey(self.sqlid)
     #     self.refresh()
 
-    def __init__(self, qid,debug=False):
-        '''This is the initialization function.'''
 
-        self.sqlInterface = sqlInterface()
-        self.qualInterface = qualInterface()
-
-        self.qid = qid
-        self.schema = self.qualInterface.getSchema(self.qid,debug=debug)
-        self.name = self.schema['name']
-        self.responses = self.schema['responseCounts']
-        self.active = self.schema['isActive']
 
