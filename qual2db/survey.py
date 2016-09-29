@@ -4,7 +4,6 @@
 # Local modules
 from sqlInterface import sqlInterface
 from qualInterface import qualInterface
-
 #############################################
 # Survey Object
 #############################################
@@ -12,17 +11,21 @@ from qualInterface import qualInterface
 class survey(object):
     '''The Qualtrics survey object.'''
 
-    def __init__(self, qid,debug=False):
-        '''This is the initialization function.'''
+    def __init__(self,survey_qid,debug=False):
+        '''Iinitialization function. Gets schema and puts atrributes in dict.'''
 
         self.sqlInterface = sqlInterface()
         self.qualInterface = qualInterface()
 
-        self.qid = qid
+        self.qid = survey_qid
         self.schema = self.qualInterface.getSchema(self.qid,debug=debug)
-        self.name = self.schema['name']
-        self.responses = self.schema['responseCounts']
-        self.active = self.schema['isActive']
+        self.attributes = self.schema
+
+        # this creates a dictionary of attributes of the survey
+        drop_keys = ['blocks','flow','embeddedData','questions','exportColumnMap','id'] 
+        map(self.attributes.pop,drop_keys)
+        self.attributes['survey_qid'] = self.qid
+        
 
 ########################################################################################################################
 
