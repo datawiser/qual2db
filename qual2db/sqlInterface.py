@@ -9,6 +9,7 @@ import mysql.connector as sql
 
 # Standard python library
 import datetime
+from dateutil import parser
 import time
 
 # Local modules
@@ -167,49 +168,87 @@ class sqlInterface(object):
         cur = self.cnx.cursor()
         survey_id = self.get_survey_id(survey.qid)
 
+        print 'WHERE survey_id="'+str(survey_id)+'";'
+
         if survey_id:
             qry = ('UPDATE surveys SET '
-                   'name="'+survey.name+'",'
-                   'ownerId="'+survey.ownerId+'",'
-                   'isActive="'+survey.isActive+'",'
-                   'creationDate="'+survey.creationDate+'",'
-                   'endDate="'+survey.endDate+'",'
-                   'startDate="'+survey.startDate+'",'
-                   'auditableResponses="'+str(survey.responseCounts['auditableResponses'])+'",'
-                   'deletedResponses="'+str(survey.responseCounts['deletedResponses'])+'",'
-                   'generatedResponses="'+str(survey.responseCounts['generatedResponses'])+'",'
-                   'lastModifiedDate='+survey.lastModifiedDate+' '
-                   'WHERE survey_id='+str(sqlid))
+                   'name="' + survey.attributes['name'] + '",'
+                   'isActive="' + str(survey.attributes['isActive']) + '",'
+                   'endDate="' + survey.attributes['endDate'] + '",'
+                   'startDate="' + survey.attributes['startDate'] + '",'
+                   'auditableResponses="' + str(survey.attributes['auditableResponses']) + '",'
+                   'deletedResponses="' + str(survey.attributes['deletedResponses']) + '",'
+                   'generatedResponses="' + str(survey.attributes['generatedResponses']) + '",'
+                   'lastModifiedDate="' + survey.attributes['lastModifiedDate'] + '" '
+                   'WHERE survey_id="'+str(survey_id)+'";')
 
-            cur.execute(qry)
+            data = survey.attributes
+
+            cur.execute(qry,data)
             self.cnx.commit()
 
-            return sqlid
+            return survey_id
 
-        qry = ('INSERT INTO surveys ('
-                'survey_qid, name,'
-                'ownerId, isActive, creationDate,'
-                'endDate, startDate',
-                'auditableResponses, deletedResponses, generatedResponses,'
-                'lastModifiedDate) '
-                'VALUES ('
-                '%(survey_qid)s,%(name)s,'
-                '%(ownerId)s,'
-                '%(status)s,%(creation_date)s)'
-                )
-        data = {'survey_name':survey_object.name,
-                'survey_qid':survey_object.qid,
-                'owner':survey_object.owner,
-                'status':survey_object.status,
-                'creation_date':survey_object.creation,
-                }
+        else:
 
-        cur.execute(qry,data)
-        self.cnx.commit()
+            qry = ('INSERT INTO surveys ('
+                   'survey_qid, '
+                   'name, '
+                   'ownerId, '
+                   'isActive, '
+                   'creationDate, '
+                   'endDate, '
+                   'startDate, '
+                   'auditableResponses, '
+                   'deletedResponses, '
+                   'generatedResponses, '
+                   'lastModifiedDate) '
+                   'VALUES ('
+                   '%(survey_qid)s, '
+                   '%(name)s, '
+                   '%(ownerId)s, '
+                   '%(isActive)s, '
+                   '%(creationDate)s, '
+                   '%(endDate)s, '
+                   '%(startDate)s, '
+                   '%(auditableResponses)s, '
+                   '%(deletedResponses)s, '
+                   '%(generatedResponses)s, '
+                   '%(lastModifiedDate)s '
+                   ')')
 
-        newid = self.get_survey_id(survey_object.qid)
+            data = survey.attributes
 
-        return newid
+            cur.execute(qry,data)
+            self.cnx.commit()
+            survey_id = get_survey_id(survey.qid)
+
+            return survey_id
+
+        # qry = ('INSERT INTO surveys ('
+        #         'survey_qid, name,'
+        #         'ownerId, isActive, creationDate,'
+        #         'endDate, startDate',
+        #         'auditableResponses, deletedResponses, generatedResponses,'
+        #         'lastModifiedDate) '
+        #         'VALUES ('
+        #         '%(survey_qid)s,%(name)s,'
+        #         '%(ownerId)s,'
+        #         '%(status)s,%(creation_date)s)'
+        #         )
+        # data = {'survey_name':survey_object.name,
+        #         'survey_qid':survey_object.qid,
+        #         'owner':survey_object.owner,
+        #         'status':survey_object.status,
+        #         'creation_date':survey_object.creation,
+        #         }
+
+        # cur.execute(qry,data)
+        # self.cnx.commit()
+
+        # newid = self.get_survey_id(survey_object.qid)
+
+        # return newid
 
     # def upload_blocks(self,survey_object):
     #     '''Uploads blocks, returns block key.'''
