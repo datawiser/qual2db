@@ -1,10 +1,9 @@
-##### Qualtrics Interface #####
-###############################
+'''
 
-# This file contains the Qualtrics-interface object and all the functions
-# that it uses to interface with the Qualtrics API
+qualInterface.py
 
-# Standard python library
+'''
+
 import json
 import time
 import zipfile
@@ -12,7 +11,9 @@ import os
 
 import requests
 
-from .credentials import qualtrics_credentials as q_creds
+from qual2db.credentials import qualtrics_credentials as q_creds
+from qual2db.credentials import download_directory
+
 
 class QualInterface(object):
     '''The interface object for communication with the Qualtrics API.'''
@@ -74,9 +75,6 @@ class QualInterface(object):
 
         return schema
 
-########################################################################################################################
-# FUNCTIONS FOR GETTING DATA
-########################################################################################################################
 
     def getData(self,qid,last_response=None,debug=False):
         '''Gets survey data.'''
