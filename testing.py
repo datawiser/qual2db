@@ -10,7 +10,7 @@ try:
 except:
     pass
 
-db = qual2db.Database('JFSP survey')
+db = qual2db.Database('sample')
 qi = qual2db.QualInterface()
 
 schema = qi.getSurvey('SV_03xFTFmDEiceCP3')
