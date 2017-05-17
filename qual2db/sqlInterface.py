@@ -15,11 +15,12 @@ import time
 # Local modules
 import config
 
+
 class sqlInterface(object):
-    '''The interface object for communicating with MySQL.'''
+    """The interface object for communicating with MySQL."""
 
     def __init__(self):
-        '''Initializes the interface with a new MySQL connection.'''
+        """Initializes the interface with a new MySQL connection."""
 
         try:
             self.cnx.close()
@@ -27,11 +28,11 @@ class sqlInterface(object):
             self.cnx = None
 
         cnx = sql.connect(
-            user = config.sqlUser,
-            passwd = config.sqlPassword,
-            host = config.sqlHost,
-            db = config.sqlDB
-            )
+            user=config.sqlUser,
+            passwd=config.sqlPassword,
+            host=config.sqlHost,
+            db=config.sqlDB
+        )
 
         self.cnx = cnx
 
@@ -40,7 +41,7 @@ class sqlInterface(object):
     ####################################################################
 
     def list_surveys(self):
-        '''Lists all the surveys currently stored in MySQL.'''
+        """Lists all the surveys currently stored in MySQL."""
         cur = self.cnx.cursor()
         qry = ('SELECT survey_id,survey_qid,name FROM surveys')
 
@@ -49,8 +50,8 @@ class sqlInterface(object):
 
         return result
 
-    def get_survey_id(self,survey_qid):
-        '''Checks if a survey exists in SQL. If so, the MySQL id is returned.'''
+    def get_survey_id(self, survey_qid):
+        """Checks if a survey exists in SQL. If so, the MySQL id is returned."""
 
         cur = self.cnx.cursor()
         cur.execute('SELECT survey_id '
@@ -63,19 +64,19 @@ class sqlInterface(object):
 
         return survey_id
 
-    def get_refresh_date(self,survey_id):
-        '''Gets the date a survey was last refreshed.'''
+    def get_refresh_date(self, survey_id):
+        """Gets the date a survey was last refreshed."""
         cur = self.cnx.cursor()
 
         qry = ('SELECT last_refresh FROM surveys '
-                 'WHERE survey_id='+str(survey_id))
+               'WHERE survey_id=' + str(survey_id))
         cur.execute(qry)
         last_refresh = cur.fetchone()[0]
 
         return last_refresh
 
     # def countRespondents(self,sqlid):
-    #     '''Returns the number or responsdents in MySQL for the given survey.'''
+    #     """Returns the number or responsdents in MySQL for the given survey."""
 
     #     cur = self.cnx.cursor()
 
@@ -89,7 +90,7 @@ class sqlInterface(object):
     #     return int(result)
 
     # def getRespondentList(self,sqlid):
-    #     '''Returns a list of respondent ids to scan for duplicates.'''
+    #     """Returns a list of respondent ids to scan for duplicates."""
 
     #     cur = self.cnx.cursor()
 
@@ -103,7 +104,7 @@ class sqlInterface(object):
     #     return respondent_list
 
     # def stamp_survey(self,sqlid, field='last_refresh'):
-    #     '''Time stamps a survey, given a date field.'''
+    #     """Time stamps a survey, given a date field."""
 
     #     cur = self.cnx.cursor()
 
@@ -120,7 +121,7 @@ class sqlInterface(object):
     #     return True
 
     # def clear_data(self,sqlid,table=None,tablelist=None):
-    #     '''Clears data for a survey from given list of tables.'''
+    #     """Clears data for a survey from given list of tables."""
 
     #     cur = self.cnx.cursor()
 
@@ -143,7 +144,7 @@ class sqlInterface(object):
     #     return True
 
     # def delete_survey(self,sqlid):
-    #     '''Deletes a survey from MySQL.'''
+    #     """Deletes a survey from MySQL."""
 
     #     cur = self.cnx.cursor()
 
@@ -162,13 +163,13 @@ class sqlInterface(object):
     # # Functions for uploading and managing data using a MySQL survey object
     # ############################################################################
 
-    def upload_survey(self,survey):
-        '''Adds (or updates) a survey given a survey object. Returns the MySQL id.'''
+    def upload_survey(self, survey):
+        """Adds (or updates) a survey given a survey object. Returns the MySQL id."""
 
         cur = self.cnx.cursor()
         survey_id = self.get_survey_id(survey.qid)
 
-        print 'WHERE survey_id="'+str(survey_id)+'";'
+        print 'WHERE survey_id="' + str(survey_id) + '";'
 
         if survey_id:
             qry = ('UPDATE surveys SET '
@@ -176,15 +177,19 @@ class sqlInterface(object):
                    'isActive="' + str(survey.attributes['isActive']) + '",'
                    'endDate="' + survey.attributes['endDate'] + '",'
                    'startDate="' + survey.attributes['startDate'] + '",'
-                   'auditableResponses="' + str(survey.attributes['auditableResponses']) + '",'
-                   'deletedResponses="' + str(survey.attributes['deletedResponses']) + '",'
-                   'generatedResponses="' + str(survey.attributes['generatedResponses']) + '",'
-                   'lastModifiedDate="' + survey.attributes['lastModifiedDate'] + '" '
-                   'WHERE survey_id="'+str(survey_id)+'";')
+                   'auditableResponses="' +
+                   str(survey.attributes['auditableResponses']) + '",'
+                   'deletedResponses="' +
+                   str(survey.attributes['deletedResponses']) + '",'
+                   'generatedResponses="' +
+                   str(survey.attributes['generatedResponses']) + '",'
+                   'lastModifiedDate="' +
+                   survey.attributes['lastModifiedDate'] + '" '
+                   'WHERE survey_id="' + str(survey_id) + '";')
 
             data = survey.attributes
 
-            cur.execute(qry,data)
+            cur.execute(qry, data)
             self.cnx.commit()
 
             return survey_id
@@ -219,7 +224,7 @@ class sqlInterface(object):
 
             data = survey.attributes
 
-            cur.execute(qry,data)
+            cur.execute(qry, data)
             self.cnx.commit()
             survey_id = get_survey_id(survey.qid)
 
@@ -251,7 +256,7 @@ class sqlInterface(object):
         # return newid
 
     # def upload_blocks(self,survey_object):
-    #     '''Uploads blocks, returns block key.'''
+    #     """Uploads blocks, returns block key."""
 
     #     cur = self.cnx.cursor()
 
@@ -279,7 +284,7 @@ class sqlInterface(object):
     #     return block_key
 
     # def upload_respondents(self,survey_object):
-    #     '''Uploads the respondents given a survey object. Returns a respondent key.'''
+    #     """Uploads the respondents given a survey object. Returns a respondent key."""
 
     #     cur = self.cnx.cursor()
     #     cur.execute('LOCK TABLES respondents WRITE;')
@@ -316,7 +321,7 @@ class sqlInterface(object):
     #     return key
 
     # def upload_choices(self,survey_object):
-    #     '''Uploads the choices given a survey object. Returns a choice key.'''
+    #     """Uploads the choices given a survey object. Returns a choice key."""
 
     #     cur = self.cnx.cursor()
 
@@ -351,9 +356,8 @@ class sqlInterface(object):
 
     #     return choice_key
 
-
     # def upload_questions(self,survey_object):
-    #     '''Uploads the questions given a survey object. Returns a question key.'''
+    #     """Uploads the questions given a survey object. Returns a question key."""
 
     #     cur = self.cnx.cursor()
 
@@ -408,7 +412,7 @@ class sqlInterface(object):
     #     return key
 
     # def upload_answers(self,survey_object):
-    #     '''Uploads the answers.'''
+    #     """Uploads the answers."""
 
     #     cur = self.cnx.cursor()
 
@@ -444,7 +448,7 @@ class sqlInterface(object):
     #     return answer_key
 
     # def upload_responses(self,survey_object):
-    #     '''Uploads the responses.'''
+    #     """Uploads the responses."""
 
     #     t0 = time.time()
     #     cur = self.cnx.cursor()
@@ -483,7 +487,7 @@ class sqlInterface(object):
     # ######################################################################
 
     # def get_sample_respondent(self,sqlid):
-    #     '''This is for testing.'''
+    #     """This is for testing."""
 
     #     cur = self.cnx.cursor()
 
@@ -497,7 +501,7 @@ class sqlInterface(object):
     #     return result
 
     # def check_for_blocks(self,survey_object):
-    #     '''Checks if all the questions have been loaded to MySQL'''
+    #     """Checks if all the questions have been loaded to MySQL"""
 
     #     cur = self.cnx.cursor()
 
@@ -515,7 +519,7 @@ class sqlInterface(object):
     #         return False
 
     # def check_for_questions(self,survey_object):
-    #     '''Checks if all the questions have been loaded to MySQL'''
+    #     """Checks if all the questions have been loaded to MySQL"""
 
     #     cur = self.cnx.cursor()
 
@@ -533,7 +537,7 @@ class sqlInterface(object):
     #         return False
 
     # def check_for_choices(self,survey_object):
-    #     '''Checks if all the choices have been loaded to MySQL'''
+    #     """Checks if all the choices have been loaded to MySQL"""
 
     #     cur = self.cnx.cursor()
 
@@ -551,7 +555,7 @@ class sqlInterface(object):
     #         return False
 
     # def check_for_answers(self,survey_object):
-    #     '''Checks if all the answers have been loaded to MySQL'''
+    #     """Checks if all the answers have been loaded to MySQL"""
 
     #     cur = self.cnx.cursor()
 
@@ -569,7 +573,7 @@ class sqlInterface(object):
     #         return False
 
     # def check_for_schema(self,survey_object):
-    #     '''Checks to see if there is data for all schema tables.'''
+    #     """Checks to see if there is data for all schema tables."""
 
     #     # this function needs work
 
@@ -584,7 +588,7 @@ class sqlInterface(object):
     #         return True
 
     # def configure_db(self,overwrite=False):
-    #     '''Sets up all the tables in MySQL.'''
+    #     """Sets up all the tables in MySQL."""
 
     #     s = None
 
@@ -606,7 +610,7 @@ class sqlInterface(object):
 
     #     cur = self.cnx.cursor()
 
-    #     surveys = '''
+    #     surveys = """
     #     CREATE TABLE `surveys` (
     #     `survey_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `survey_name` VARCHAR(50) NULL DEFAULT NULL,
@@ -622,9 +626,9 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
-    #     blocks = '''
+    #     blocks = """
     #     CREATE TABLE `blocks` (
     #     `block_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `survey_id` INT(11) NULL DEFAULT NULL,
@@ -636,9 +640,9 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
-    #     questions = '''
+    #     questions = """
     #     CREATE TABLE `questions` (
     #     `question_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `survey_id` INT(11) NULL DEFAULT '0',
@@ -657,9 +661,9 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
-    #     choices = '''
+    #     choices = """
     #     CREATE TABLE `choices` (
     #     `choice_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `survey_id` INT(11) NULL DEFAULT NULL,
@@ -675,9 +679,9 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
-    #     answers = '''
+    #     answers = """
     #     CREATE TABLE `answers` (
     #     `answer_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `survey_id` INT(11) NULL DEFAULT '0',
@@ -691,9 +695,9 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
-    #     respondents = '''
+    #     respondents = """
     #     CREATE TABLE `respondents` (
     #     `respondent_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `respondent_qid` VARCHAR(50) NOT NULL DEFAULT '0',
@@ -711,9 +715,9 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
-    #     responses = '''
+    #     responses = """
     #     CREATE TABLE `responses` (
     #     `response_id` INT(11) NOT NULL AUTO_INCREMENT,
     #     `survey_id` INT(11) NULL DEFAULT NULL,
@@ -729,7 +733,7 @@ class sqlInterface(object):
     #     ENGINE=InnoDB
     #     AUTO_INCREMENT=1
     #     ;
-    #     '''
+    #     """
 
     #     tables_sql = [surveys,blocks,questions,choices,answers,respondents,responses]
     #     tables_name = ['surveys','blocks','questions','choices','answers','respondents','responses']
@@ -754,15 +758,12 @@ class sqlInterface(object):
     #             cur.execute(table[1])
     #             print table[0], 'added.'
 
-
     #     self.cnx.commit()
 
     #     print 'MySQL configured.'
 
-
-
     # def get_last_mirrored_response(self,sqlid):
-    #     '''Gets the date of the last respondent in sql for the given survey.'''
+    #     """Gets the date of the last respondent in sql for the given survey."""
 
     #     cur = self.cnx.cursor()
 
@@ -772,5 +773,3 @@ class sqlInterface(object):
     #     result = cur.fetchone()[0]
 
     #     return result
-
-
