@@ -4,6 +4,7 @@ import json
 import time
 import zipfile
 import os
+import configparser
 
 import pandas as pd
 import requests
@@ -14,10 +15,39 @@ from sqlalchemy.orm import sessionmaker
 from qual2db.datamodel import Base
 from qual2db import datamodel
 
-from qual2db.credentials import qualtrics_credentials as q_creds
-from qual2db.credentials import download_directory
-
 Session = sessionmaker()
+
+# -----------------------------------------------------------------------
+# Parse configuration
+# -----------------------------------------------------------------------
+
+package_directory = os.path.dirname(__file__)
+config_file = os.path.join(package_directory, 'config.ini')
+
+config = configparser.ConfigParser()
+config.read(config_file)
+
+download_directory = config['Basic']['download_directory']
+
+qual_creds = {
+    'baseurl': config['Qualtrics Credentials']['baseurl'],
+    'user': config['Qualtrics Credentials']['User'],
+    'password': config['Qualtrics Credentials']['Password'],
+    'token': config['Qualtrics Credentials']['Token'],
+    'version': config['Qualtrics Credentials']['Version']
+}
+
+sql_creds = {
+
+    'user': config['MySQL Credentials']['sqlUser'],
+    'password': config['MySQL Credentials']['sqlPassword'],
+    'host': config['MySQL Credentials']['sqlHost'],
+    'db': config['MySQL Credentials']['sqlDB']
+}
+
+# -----------------------------------------------------------------------
+# Key variables
+# -----------------------------------------------------------------------
 
 default_respondent_fields = [
     'ResponseID',
@@ -35,6 +65,10 @@ default_respondent_fields = [
     'RecipientLastName',
     'Status'
 ]
+
+# -----------------------------------------------------------------------
+# Classes
+# -----------------------------------------------------------------------
 
 
 class DatabaseInterface:
@@ -105,10 +139,10 @@ class QualtricsInterface:
         debug : if True prints out log
         """
 
-        url = q_creds['baseurl'] + call
+        url = qual_creds['baseurl'] + call
 
         headers = {
-            'x-api-token': q_creds['token'],
+            'x-api-token': qual_creds['token'],
             'content-type': 'application/json'
         }
 
