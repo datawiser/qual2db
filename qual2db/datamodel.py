@@ -1,7 +1,5 @@
 """
-
 datamodel.py
-
 """
 
 from bs4 import BeautifulSoup
@@ -13,23 +11,6 @@ from sqlalchemy.orm import relationship
 
 # create the declarative base
 Base = declarative_base()
-
-default_respondent_fields = [
-    'ResponseID',
-    'ResponseSet',
-    'StartDate',
-    'EndDate',
-    'ExternalDataReference',
-    'Finished',
-    'IPAddress',
-    'LocationAccuracy',
-    'LocationLatitude',
-    'LocationLongitude',
-    'RecipientEmail',
-    'RecipientFirstName',
-    'RecipientLastName',
-    'Status'
-]
 
 
 class Survey(Base):

@@ -1,12 +1,12 @@
 import inspect
 import sqlite3
-
 import json
 import time
 import zipfile
 import os
 
 import pandas as pd
+import requests
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -14,25 +14,33 @@ from sqlalchemy.orm import sessionmaker
 from qual2db.datamodel import Base
 from qual2db import datamodel
 
-from qual2db.datamodel import Survey, Block, Question, SubQuestion, Choice
-from qual2db.datamodel import Respondent, Response, default_respondent_fields
-
-import requests
-
 from qual2db.credentials import qualtrics_credentials as q_creds
 from qual2db.credentials import download_directory
 
 Session = sessionmaker()
+
+default_respondent_fields = [
+    'ResponseID',
+    'ResponseSet',
+    'StartDate',
+    'EndDate',
+    'ExternalDataReference',
+    'Finished',
+    'IPAddress',
+    'LocationAccuracy',
+    'LocationLatitude',
+    'LocationLongitude',
+    'RecipientEmail',
+    'RecipientFirstName',
+    'RecipientLastName',
+    'Status'
+]
 
 
 class DatabaseInterface:
 
     def __init__(self, path):
         global Base
-
-        # add db extension if unspecified
-        if path[:-3] != '.db':
-            path += '.db'
 
         Session = sessionmaker()
         self.path = path
@@ -190,6 +198,59 @@ class Manager(DatabaseInterface, QualtricsInterface):
             func = self.bind_table(table)
             setattr(self, table, func)
 
+    def add_survey(self, qid):
+        existing = self.session.query(datamodel.Survey).filter(
+            datamodel.Survey.qid == qid).first()
+        if existing:
+            return existing
+
+        schema = self.getSurvey(qid)
+        data = self.getData(qid)
+
+        survey = datamodel.Survey()
+        schema_mapper(survey, schema)
+        self.save(survey)
+
+        index = build_index(survey, schema)
+        parse_responses(survey, schema, data)
+        self.save(survey)
+        return survey
+
+
+def schema_mapper(Survey, schema):
+    # map survey attributes
+    schema_copy = schema.copy()
+    data_mapper(Survey, schema_copy)
+
+    Survey.blocks = entity_mapper(datamodel.Block, schema_copy['blocks'])
+    block_map = map_blocks(schema_copy)
+    block_index = Survey.get_blocks()
+
+    Survey.questions = entity_mapper(
+        datamodel.Question, schema_copy['questions'])
+
+    # add the choices and subquestions to each question
+    for question in Survey.questions:
+        question.parse_question_text()
+        data = schema_copy['questions'][question.qid]
+
+        try:
+            question.subquestions = entity_mapper(
+                datamodel.SubQuestion, data['subQuestions'])
+        except:
+            pass
+
+        try:
+            question.choices = entity_mapper(datamodel.Choice, data['choices'])
+        except:
+            pass
+
+        # add to block
+        related_block = block_map[question.qid]
+        block_index[related_block].questions.append(question)
+
+    return Survey
+
 
 def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid=None):
     dictionary_copy = dictionary.copy()
@@ -235,84 +296,41 @@ def entity_mapper(Entity, entity_data, skip_keys=None):
     entity_list = []
     for entity in entity_data:
         i = Entity()
-
         try:
             data = entity_data[entity]
         except:
             data = entity
-
         if skip_keys:
             data_mapper(i, data, skip_keys, qid=entity)
         else:
             data_mapper(i, data, qid=entity)
-
         entity_list.append(i)
-
     return entity_list
 
 
 def map_blocks(schema):
     block_data = schema['blocks'].copy()
-
     block_map = dict()
-
     for block in block_data:
         elements = block_data[block]['elements']
         for element in elements:
             if element['type'] == 'Question':
                 block_map[element['questionId']] = block
-
     return block_map
-
-
-def schema_mapper(Survey, schema):
-    # map survey attributes
-    schema_copy = schema.copy()
-    data_mapper(Survey, schema_copy)
-
-    Survey.blocks = entity_mapper(Block, schema_copy['blocks'])
-    block_map = map_blocks(schema_copy)
-    block_index = Survey.get_blocks()
-
-    Survey.questions = entity_mapper(Question, schema_copy['questions'])
-
-    # add the choices and subquestions to each question
-    for question in Survey.questions:
-        question.parse_question_text()
-        data = schema_copy['questions'][question.qid]
-
-        try:
-            question.subquestions = entity_mapper(
-                SubQuestion, data['subQuestions'])
-        except:
-            pass
-
-        try:
-            question.choices = entity_mapper(Choice, data['choices'])
-        except:
-            pass
-
-        # add to block
-        related_block = block_map[question.qid]
-        block_index[related_block].questions.append(question)
-
-    return Survey
 
 
 def build_index(Survey, schema):
     index = dict()
-
     index['exportColumnMap'] = schema['exportColumnMap'].copy()
     index['questions'] = Survey.get_questions()
     index['subquestions'] = Survey.get_subquestions()
     index['choices'] = Survey.get_choices()
     index['embedded_data'] = Survey.get_embedded_data()
-
     return index
 
 
 def parse_response(index, column, entry):
-    response = Response()
+    response = datamodel.Response()
 
     # column is a respondnet field
     if column in default_respondent_fields:
@@ -363,7 +381,7 @@ def parse_responses(Survey, schema, data):
     index = build_index(Survey, schema)
 
     for responses in data:
-        respondent = data_mapper(Respondent(), responses)
+        respondent = data_mapper(datamodel.Respondent(), responses)
 
         for record in responses:
             response = parse_response(index, record, responses[record])
