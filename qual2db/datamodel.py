@@ -14,6 +14,23 @@ from sqlalchemy.orm import relationship
 # create the declarative base
 Base = declarative_base()
 
+default_respondent_fields = [
+    'ResponseID',
+    'ResponseSet',
+    'StartDate',
+    'EndDate',
+    'ExternalDataReference',
+    'Finished',
+    'IPAddress',
+    'LocationAccuracy',
+    'LocationLatitude',
+    'LocationLongitude',
+    'RecipientEmail',
+    'RecipientFirstName',
+    'RecipientLastName',
+    'Status'
+]
+
 
 class Survey(Base):
     __tablename__ = 'survey'
@@ -36,8 +53,6 @@ class Survey(Base):
     startDate = Column(String)
 
     def get_blocks(self):
-        """
-        """
         blocks = dict()
         for block in self.blocks:
             blocks[block.qid] = block
@@ -45,8 +60,6 @@ class Survey(Base):
         return blocks
 
     def get_questions(self):
-        """
-        """
         questions = dict()
         for question in self.questions:
             questions[question.qid] = question
@@ -54,7 +67,6 @@ class Survey(Base):
         return questions
 
     def get_choices(self):
-
         choices = dict()
         for question in self.questions:
             for choice in question.choices:
@@ -65,7 +77,6 @@ class Survey(Base):
         return choices
 
     def get_subquestions(self):
-
         subquestions = dict()
         for question in self.questions:
             for subquestion in question.subquestions:
@@ -76,7 +87,6 @@ class Survey(Base):
         return subquestions
 
     def get_embedded_data(self):
-
         embedded_data = dict()
         for embedded_data in self.embedded_data:
             embedded_data[embedded_data.name] = embedded_data
@@ -85,8 +95,6 @@ class Survey(Base):
 
 
 class Block(Base):
-    """
-    """
     __tablename__ = 'block'
 
     id = Column(Integer, primary_key=True)
@@ -103,8 +111,6 @@ Survey.blocks = relationship(
 
 
 class Question(Base):
-    """
-    """
     __tablename__ = 'question'
 
     id = Column(Integer, primary_key=True)
@@ -124,8 +130,6 @@ class Question(Base):
     survey = relationship(Survey, back_populates='questions')
 
     def parse_question_text(self):
-        """
-        """
         soup = BeautifulSoup(self.questionText, 'html.parser')
         text = ''
         ps = soup.find_all('p')
@@ -144,8 +148,6 @@ Block.questions = relationship(
 
 
 class SubQuestion(Base):
-    """
-    """
     __tablename__ = 'subquestion'
 
     id = Column(Integer, primary_key=True)
@@ -165,8 +167,6 @@ Question.subquestions = relationship(
 
 
 class Choice(Base):
-    """
-    """
     __tablename__ = 'choice'
 
     id = Column(Integer, primary_key=True)
@@ -186,8 +186,6 @@ Question.choices = relationship(
 
 
 class EmbeddedData(Base):
-    """
-    """
     __tablename__ = 'embedded_data'
 
     id = Column(Integer, primary_key=True)
@@ -202,8 +200,6 @@ Survey.embedded_data = relationship(
 
 
 class Respondent(Base):
-    """
-    """
     __tablename__ = 'respondent'
 
     id = Column(Integer, primary_key=True)
@@ -235,8 +231,6 @@ Survey.respondents = relationship(
 
 
 class Response(Base):
-    """
-    """
     __tablename__ = 'response'
 
     id = Column(Integer, primary_key=True)
@@ -261,24 +255,3 @@ class Response(Base):
 Respondent.responses = relationship(
     'Response', order_by=Response.id, back_populates='respondent')
 #Choice.responses = relationship('Response', order_by=Response.id, back_populates='respondent')
-
-"""
-useful objects
-"""
-
-default_respondent_fields = [
-    'ResponseID',
-    'ResponseSet',
-    'StartDate',
-    'EndDate',
-    'ExternalDataReference',
-    'Finished',
-    'IPAddress',
-    'LocationAccuracy',
-    'LocationLatitude',
-    'LocationLongitude',
-    'RecipientEmail',
-    'RecipientFirstName',
-    'RecipientLastName',
-    'Status'
-]
