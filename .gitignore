@@ -1,4 +1,5 @@
 *.pyc
 config.ini
-*sqlite
+*.sqlite
 *.csv
+*.db
