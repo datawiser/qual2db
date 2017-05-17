@@ -3,3 +3,4 @@ config.ini
 *.sqlite
 *.csv
 *.db
+.bfg-report
