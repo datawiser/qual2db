@@ -1,5 +1,0 @@
-"""
-
-qualInterface.py
-
-"""

@@ -1,6 +1,6 @@
 
 import os
-from qual2db.manager import Manager
+from qual2db import Manager
 
 try:
     os.remove('sample.db')
