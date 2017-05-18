@@ -1,9 +1,6 @@
 """
 datamodel.py
 """
-
-from bs4 import BeautifulSoup
-
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Table, Numeric, Boolean, DateTime
 from sqlalchemy import ForeignKey
@@ -109,18 +106,6 @@ class Question(Base):
 
     block = relationship(Block, back_populates='questions')
     survey = relationship(Survey, back_populates='questions')
-
-    def parse_question_text(self):
-        soup = BeautifulSoup(self.questionText, 'html.parser')
-        text = ''
-        ps = soup.find_all('p')
-        if len(ps) > 0:
-            for p in ps:
-                text += p.text
-        else:
-            text = str(soup)
-
-        self.promptText = text
 
 Survey.questions = relationship(
     'Question', order_by=Question.id, back_populates='survey')
