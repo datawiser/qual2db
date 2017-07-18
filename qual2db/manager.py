@@ -238,6 +238,8 @@ class Manager(DatabaseInterface, QualtricsInterface):
             setattr(self, table, func)
 
     def add_survey(self, qid):
+        """Adds a survey to the database."""
+
         existing = self.session.query(datamodel.Survey).filter(
             datamodel.Survey.qid == qid).first()
         if existing:
