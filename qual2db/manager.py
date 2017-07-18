@@ -15,7 +15,7 @@ from sqlalchemy.orm import sessionmaker
 from qual2db.datamodel import Base
 from qual2db import datamodel
 
-import pymysql
+import mysqlclient
 
 Session = sessionmaker()
 
@@ -84,7 +84,7 @@ class DatabaseInterface:
         a = 'mysql+mysqldb://<user>:<password>@<host>[:<port>]/<dbname>'
 
         self.engine = create_engine(
-            'sqlite+pysqlite:///' + self.path, module=sqlite3.dbapi2, echo=False)
+            'sqlite+pysqlite:///' + self.path, module=sqlite3.dbapi2, echo=False, pool_recycle=280)
 
         Session.configure(bind=self.engine)
         self.session = Session()
