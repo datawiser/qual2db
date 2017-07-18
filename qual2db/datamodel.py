@@ -1,7 +1,6 @@
 """
 datamodel.py
 """
-
 from bs4 import BeautifulSoup
 
 from sqlalchemy.ext.declarative import declarative_base
