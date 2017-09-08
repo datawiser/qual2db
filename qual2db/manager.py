@@ -11,11 +11,12 @@ import requests
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import scoped_session
 
 from qual2db.datamodel import Base
 from qual2db import datamodel
 
-import mysqlclient
+import _mysql
 
 Session = sessionmaker()
 
@@ -75,22 +76,11 @@ default_respondent_fields = [
 
 class DatabaseInterface:
 
-    def __init__(self, path):
-        global Base
-
-        Session = sessionmaker()
-        self.path = path
-
-        a = 'mysql+mysqldb://<user>:<password>@<host>[:<port>]/<dbname>'
-
-        self.engine = create_engine(
-            'sqlite+pysqlite:///' + self.path, module=sqlite3.dbapi2, echo=False, pool_recycle=280)
-
-        Session.configure(bind=self.engine)
-        self.session = Session()
+    def __init__(self, constr, Base):
+        self.engine = create_engine(constr, pool_recycle=280)
         Base.metadata.create_all(self.engine)
-
-        self.connection = sqlite3.connect(self.path)
+        self.SessionMaker = scoped_session(sessionmaker(bind=self.engine))
+        self.__session = None
 
         self.archetypes = dict()
         for name, obj in inspect.getmembers(datamodel):
@@ -100,13 +90,18 @@ class DatabaseInterface:
                 except:
                     continue
 
-    def save(self, Objects):
-        """Saves objects to the database. Takes a list of a single object."""
-        if isinstance(Objects, list):
-            self.session.add_all(Objects)
-        else:
-            self.session.add(Objects)
-        self.session.commit()
+    def __getattr__(self, name):
+        return getattr(self.__session, name)
+
+    def close(self):
+        try:
+            self.__session.close()
+        except:
+            self.__session = None
+
+    def connect(self):
+        self.close()
+        self.__session = self.SessionMaker()
 
     def bind_table(self, table_name):
         """Binds a database table to a function for retriving a pandas dataframe view of the database"""
@@ -226,36 +221,36 @@ class QualtricsInterface:
         return json.load(data)['responses']
 
 
-class Manager(DatabaseInterface, QualtricsInterface):
+class SurveyManager(DatabaseInterface, QualtricsInterface):
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, path):
-        DatabaseInterface.__init__(self, path)
+    def __init__(self, constr, Base):
+        DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
-        for table in self.archetypes:
-            func = self.bind_table(table)
-            setattr(self, table, func)
+        # for table in self.archetypes:
+        #     func = self.bind_table(table)
+        #     setattr(self, table, func)
 
-    def add_survey(self, qid):
-        """Adds a survey to the database."""
+    # def add_survey(self, qid):
+    #     """Adds a survey to the database."""
 
-        existing = self.session.query(datamodel.Survey).filter(
-            datamodel.Survey.qid == qid).first()
-        if existing:
-            return existing
+    #     existing = self.session.query(datamodel.Survey).filter(
+    #         datamodel.Survey.qid == qid).first()
+    #     if existing:
+    #         return existing
 
-        schema = self.getSurvey(qid)
-        data = self.getData(qid)
+    #     schema = self.getSurvey(qid)
+    #     data = self.getData(qid)
 
-        survey = datamodel.Survey()
-        schema_mapper(survey, schema)
-        self.save(survey)
+    #     survey = datamodel.Survey()
+    #     schema_mapper(survey, schema)
+    #     self.save(survey)
 
-        index = build_index(survey, schema)
-        parse_responses(survey, schema, data)
-        self.save(survey)
-        return survey
+    #     index = build_index(survey, schema)
+    #     parse_responses(survey, schema, data)
+    #     self.save(survey)
+    #     return survey
 
 
 def schema_mapper(Survey, schema):
