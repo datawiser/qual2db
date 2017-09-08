@@ -228,29 +228,36 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
-        # for table in self.archetypes:
-        #     func = self.bind_table(table)
-        #     setattr(self, table, func)
+        for table in self.archetypes:
+            func = self.bind_table(table)
+            setattr(self, table, func)
 
-    # def add_survey(self, qid):
-    #     """Adds a survey to the database."""
+    def add_survey(self, qid, replace=False):
+        """Adds a survey to the database."""
+        self.connect()
 
-    #     existing = self.session.query(datamodel.Survey).filter(
-    #         datamodel.Survey.qid == qid).first()
-    #     if existing:
-    #         return existing
+        existing = self.query(datamodel.Survey).filter(
+            datamodel.Survey.qid == qid).first()
 
-    #     schema = self.getSurvey(qid)
-    #     data = self.getData(qid)
+        if existing:
+            if not replace:
+                return existing
+            else:
+                self.delete(existing)
 
-    #     survey = datamodel.Survey()
-    #     schema_mapper(survey, schema)
-    #     self.save(survey)
+        schema = self.getSurvey(qid)
+        data = self.getData(qid)
 
-    #     index = build_index(survey, schema)
-    #     parse_responses(survey, schema, data)
-    #     self.save(survey)
-    #     return survey
+        survey = datamodel.Survey()
+        schema_mapper(survey, schema)
+        self.add(survey)
+        self.commit()
+
+        index = build_index(survey, schema)
+        parse_responses(survey, schema, data)
+        self.add(survey)
+        self.commit()
+        return survey
 
 
 def schema_mapper(Survey, schema):
@@ -267,7 +274,7 @@ def schema_mapper(Survey, schema):
 
     # add the choices and subquestions to each question
     for question in Survey.questions:
-        question.parse_question_text()
+        # question.parse_question_text()
         data = schema_copy['questions'][question.qid]
 
         try:

@@ -14,7 +14,7 @@ def main():
 
         '/static': {
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': 'C:/Users/Owen/Documents/Projects/coder/txtcoder/static'
+            'tools.staticdir.dir': 'C:/Users/Owen/Documents/Projects/qual2db/qual2db/qual2db/static/'
 
         }
     }

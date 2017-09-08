@@ -87,7 +87,7 @@ class Block(Base):
 
 
 Survey.blocks = relationship(
-    'Block', order_by=Block.id, back_populates='survey')
+    'Block', order_by=Block.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Question(Base):
@@ -110,9 +110,9 @@ class Question(Base):
     survey = relationship(Survey, back_populates='questions')
 
 Survey.questions = relationship(
-    'Question', order_by=Question.id, back_populates='survey')
+    'Question', order_by=Question.id, back_populates='survey', cascade='save-update, merge, delete')
 Block.questions = relationship(
-    'Question', order_by=Question.id, back_populates='block')
+    'Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
 
 
 class SubQuestion(Base):
@@ -131,7 +131,7 @@ class SubQuestion(Base):
     question = relationship(Question, back_populates='subquestions')
 
 Question.subquestions = relationship(
-    'SubQuestion', order_by=SubQuestion.id, back_populates='question')
+    'SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
 
 
 class Choice(Base):
@@ -150,7 +150,7 @@ class Choice(Base):
     question = relationship(Question, back_populates='choices')
 
 Question.choices = relationship(
-    'Choice', order_by=Choice.id, back_populates='question')
+    'Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
 
 
 class EmbeddedData(Base):
@@ -164,7 +164,7 @@ class EmbeddedData(Base):
     survey = relationship(Survey, back_populates='embedded_data')
 
 Survey.embedded_data = relationship(
-    'EmbeddedData', order_by=EmbeddedData.id, back_populates='survey')
+    'EmbeddedData', order_by=EmbeddedData.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Respondent(Base):
@@ -195,7 +195,7 @@ class Respondent(Base):
     survey = relationship(Survey, back_populates='respondents')
 
 Survey.respondents = relationship(
-    'Respondent', order_by=Respondent.id, back_populates='survey')
+    'Respondent', order_by=Respondent.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Response(Base):
@@ -221,5 +221,5 @@ class Response(Base):
 
 # Survey.responses = relationship('Response', order_by=Response.id, back_populates='survey')
 Respondent.responses = relationship(
-    'Response', order_by=Response.id, back_populates='respondent')
+    'Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')
 #Choice.responses = relationship('Response', order_by=Response.id, back_populates='respondent')

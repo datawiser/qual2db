@@ -6,17 +6,25 @@
 
 <link rel="stylesheet" type="text/css" href="/static/style.css">
 
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
 <title>menu</title>
 </head>
 <body>
-    <div class="centerbin">
-        <form class="pure-form pure-form-stacked" method="post" action="home">
-            <fieldset>
-            <input type="text" placeholder="Username", name="username">
-            <button type="submit" class="pure-button pure-button-primary">Login</button>
-            </fieldset>
-        </form>
-    </div>
+<h2>qual2db</h2>
 
+ <form method="post" action="update">
+    <table class="pure-table pure-table-horizontal">
+    <tr>
+        <th>survey name</th>
+        <th>active</th>
+        <th>responses</th>
+        <th>in database</th>
+    </tr>
+        ${rows}
+    </table>
+
+<button type="submit" class="pure-button pure-button-primary">Save</button>
+</form>
 </body>
 </html>

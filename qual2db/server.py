@@ -34,20 +34,51 @@ class Root(object):
         cherrypy.engine.exit()
 
     @cherrypy.expose
-    def login(self):
+    def index(self):
         self.sm.connect()
-        surveys = self.sm.listSurveys()
-        table = '<h3>Surveys in Qualtrics</h3>'
-        table += '<table><th>qid</th><th>name</th><th>active</th>'
-        for survey in surveys:
-            table += '<tr>'
-            for cell in survey:
-                table += '<td>' + str(cell) + '</td>'
-            table += '</tr>'
-        table += '</table>'
 
-        #page = Template(filename=os.path.join(DIR, 'templates/login.html'))
-        return table
+        surveys = self.sm.listSurveys()
+        surveys_in_db = self.sm.survey().qid.tolist()
+
+        survey_row = Template(filename=os.path.join(
+            DIR, 'templates/survey_row.html'))
+
+        page = Template(filename=os.path.join(
+            DIR, 'templates/login.html'))
+
+        rows = ''
+
+        for s in surveys:
+            if s[0] in surveys_in_db:
+                checked = 'checked'
+                survey = self.sm.query(Survey).filter(Survey.qid == s[0]).one()
+                qid = s[0]
+                name = survey.name
+                responses = str(len(survey.respondents))
+                active = survey.isActive
+                if active == '1':
+                    active = True
+                elif active == '0':
+                    return False
+                else:
+                    pass
+            else:
+                checked = ''
+                survey = self.sm.getSurvey(s[0])
+                qid = s[0]
+                name = survey['name']
+                responses = survey['responseCounts']['auditable']
+                active = survey['isActive']
+
+            rows += survey_row.render(qid=qid, name=name,
+                                      responses=responses, active=active, checked=checked)
+
+        self.sm.close()
+        return page.render(rows=rows)
+
+    @cherrypy.expose
+    def update(self, **args):
+        return args
 
     @cherrypy.expose
     def home(self, username):
