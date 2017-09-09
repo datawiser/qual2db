@@ -1,6 +1,6 @@
 import cherrypy
 import os
-from qual2db.server import Root
+from qual2db.gui import Root
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
