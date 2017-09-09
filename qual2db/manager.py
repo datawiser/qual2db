@@ -224,7 +224,7 @@ class QualtricsInterface:
 class SurveyManager(DatabaseInterface, QualtricsInterface):
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, constr, Base):
+    def __init__(self, constr, Base=Base):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
