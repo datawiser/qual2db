@@ -77,8 +77,31 @@ class Root(object):
         return page.render(rows=rows)
 
     @cherrypy.expose
-    def update(self, **args):
-        return args
+    def update(self, **qids):
+        surveys_in_db = self.sm.survey().qid.tolist()
+        if qids:
+            for qid in qids:
+                if qid in surveys_in_db:
+                    pass
+                else:
+                    self.sm.add_survey(qid)
+            for qid in surveys_in_db:
+                if qid in qids:
+                    pass
+                else:
+                    s = self.sm.query(Survey).filter(Survey.qid == qid).one()
+                    self.sm.delete(s)
+                    self.sm.commit()
+        else:
+            for qid in surveys_in_db:
+                if qid in qids:
+                    pass
+                else:
+                    s = self.sm.query(Survey).filter(Survey.qid == qid).one()
+                    self.sm.delete(s)
+                    self.sm.commit()
+
+        raise cherrypy.InternalRedirect('index')
 
     @cherrypy.expose
     def home(self, username):
