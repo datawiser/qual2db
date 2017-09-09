@@ -10,6 +10,4 @@ If using as a library, here is an example of how to run qual2db:
 
 To use the browser cherrypy powered gui run this from the command line:
 
-from qual2db.manager import SurveyManager
-
     python start-gui.py
