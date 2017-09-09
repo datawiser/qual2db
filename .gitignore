@@ -1,4 +1,4 @@
 *.pyc
-config.ini
+qual2db/config.ini
 *.sqlite
 *.db
