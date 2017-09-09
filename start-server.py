@@ -1,8 +1,8 @@
-import sys
-sys.path.append('C://Users/Owen/Documents/Projects/qual2db')
-
 import cherrypy
+import os
 from qual2db.server import Root
+
+DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def main():
@@ -13,8 +13,9 @@ def main():
         },
 
         '/static': {
+            'tools.staticdir.root': DIR,
             'tools.staticdir.on': True,
-            'tools.staticdir.dir': 'C:/Users/Owen/Documents/Projects/qual2db/qual2db/qual2db/static/'
+            'tools.staticdir.dir': 'qual2db/static/'
 
         }
     }
