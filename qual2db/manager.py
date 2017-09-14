@@ -8,15 +8,12 @@ import configparser
 
 import pandas as pd
 import requests
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm import scoped_session
 
 from qual2db.datamodel import Base
 from qual2db import datamodel
-
-import _mysql
 
 Session = sessionmaker()
 
@@ -63,7 +60,7 @@ default_respondent_fields = [
 ]
 
 # -----------------------------------------------------------------------
-# Classes
+# Mangement Classes
 # -----------------------------------------------------------------------
 
 
@@ -255,6 +252,10 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         self.add(survey)
         self.commit()
         return survey
+
+# -----------------------------------------------------------------------
+# Data conversion functions
+# -----------------------------------------------------------------------
 
 
 def schema_mapper(Survey, schema):
