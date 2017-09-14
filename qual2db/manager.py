@@ -34,10 +34,7 @@ download_directory = config['Basic']['download_directory']
 
 qual_creds = {
     'baseurl': config['Qualtrics Credentials']['baseurl'],
-    'user': config['Qualtrics Credentials']['User'],
-    'password': config['Qualtrics Credentials']['Password'],
-    'token': config['Qualtrics Credentials']['Token'],
-    'version': config['Qualtrics Credentials']['Version']
+    'token': config['Qualtrics Credentials']['Token']
 }
 
 sql_creds = {
