@@ -16,21 +16,21 @@ class Survey(Base):
     __tablename__ = 'survey'
 
     id = Column(Integer, primary_key=True)
-    qid = Column(String)
-    name = Column(String)  # , unique=True)
+    qid = Column(String(length=50))
+    name = Column(String(length=50))  # , unique=True)
 
-    isActive = Column(String)
-    creationDate = Column(String)
-    lastModifiedDate = Column(String)
-    ownerId = Column(String)
-    organizationId = Column(String)
+    isActive = Column(String(length=50))
+    creationDate = Column(String(length=50))
+    lastModifiedDate = Column(String(length=50))
+    ownerId = Column(String(length=50))
+    organizationId = Column(String(length=50))
 
     auditable = Column(Integer)
     deleted = Column(Integer)
     generated = Column(Integer)
 
-    endDate = Column(String)
-    startDate = Column(String)
+    endDate = Column(String(length=50))
+    startDate = Column(String(length=50))
 
     def get_blocks(self):
         blocks = dict()
@@ -78,8 +78,8 @@ class Block(Base):
     __tablename__ = 'block'
 
     id = Column(Integer, primary_key=True)
-    qid = Column(String)
-    description = Column(String)
+    qid = Column(String(length=50))
+    description = Column(sqlalchemy.UnicodeText())
     elements = Column(Integer)
 
     survey_id = Column(Integer, ForeignKey('survey.id'))
@@ -94,14 +94,14 @@ class Question(Base):
     __tablename__ = 'question'
 
     id = Column(Integer, primary_key=True)
-    qid = Column(String)
-    questionLabel = Column(String)
-    questionText = Column(String)
-    promptText = Column(String)
+    qid = Column(String((length=50)))
+    questionLabel = Column(sqlalchemy.UnicodeText())
+    questionText = Column(sqlalchemy.UnicodeText())
+    promptText = Column(sqlalchemy.UnicodeText())
 
-    selector = Column(String)
-    subSelector = Column(String)
-    type = Column(String)
+    selector = Column(String(length=50))
+    subSelector = Column(String(length=50))
+    type = Column(String(length=50))
 
     block_id = Column(Integer, ForeignKey('block.id'))
     survey_id = Column(Integer, ForeignKey('survey.id'))
@@ -121,11 +121,11 @@ class SubQuestion(Base):
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
 
-    variableName = Column(String)
-    choiceText = Column(String)
-    description = Column(String)
-    recode = Column(String)
-    textEntry = Column(String)
+    variableName = Column(String(length=50))
+    choiceText = Column(String(length=50))
+    description = Column(sqlalchemy.UnicodeText())
+    recode = Column(String(length=50))
+    textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='subquestions')
@@ -140,11 +140,11 @@ class Choice(Base):
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
 
-    variableName = Column(String)
-    choiceText = Column(String)
-    description = Column(String)
-    recode = Column(String)
-    textEntry = Column(String)
+    variableName = Column(String(length=50))
+    choiceText = Column(sqlalchemy.UnicodeText())
+    description = Column(sqlalchemy.UnicodeText())
+    recode = Column(String(length=50))
+    textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='choices')
@@ -157,8 +157,8 @@ class EmbeddedData(Base):
     __tablename__ = 'embedded_data'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    defaultValue = Column(String)
+    name = Column(String(length=50))
+    defaultValue = Column(sqlalchemy.UnicodeText())
 
     survey_id = Column(Integer, ForeignKey('survey.id'))
     survey = relationship(Survey, back_populates='embedded_data')
@@ -172,23 +172,23 @@ class Respondent(Base):
 
     id = Column(Integer, primary_key=True)
 
-    ErrorCode = Column(String)
+    ErrorCode = Column(String(length=50))
 
-    ResponseID = Column(String)
-    ResponseSet = Column(String)
-    StartDate = Column(String)
-    EndDate = Column(String)
+    ResponseID = Column(String(length=50))
+    ResponseSet = Column(String(length=50))
+    StartDate = Column(String(length=50))
+    EndDate = Column(String(length=50))
 
-    ExternalDataReference = Column(String)
+    ExternalDataReference = Column(String(length=50))
     Finished = Column(Integer)
-    IPAddress = Column(String)
+    IPAddress = Column(String(length=50))
     LocationAccuracy = Column(Integer)
-    LocationLatitude = Column(String)
-    LocationLongitude = Column(String)
+    LocationLatitude = Column(String(length=50))
+    LocationLongitude = Column(String(length=50))
 
-    RecipientEmail = Column(String)
-    RecipientFirstName = Column(String)
-    RecipientLastName = Column(String)
+    RecipientEmail = Column(String(length=50))
+    RecipientFirstName = Column(String(length=50))
+    RecipientLastName = Column(String(length=50))
     Status = Column(Integer)
 
     survey_id = Column(Integer, ForeignKey('survey.id'))
@@ -202,24 +202,15 @@ class Response(Base):
     __tablename__ = 'response'
 
     id = Column(Integer, primary_key=True)
-    textEntry = Column(String)
+    textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer)
     subquestion_id = Column(Integer)
     choice_id = Column(Integer)
     embeddeddata_id = Column(Integer)
 
-    # survey_id = Column(Integer, ForeignKey('survey.id'))
-    # survey = relationship(Survey, back_populates='responses')
-
     respondent_id = Column(Integer, ForeignKey('respondent.id'))
     respondent = relationship(Respondent, back_populates='responses')
 
-    #choice_id = Column(Integer, ForeignKey('choice.id'))
-    #choice = relationship(Choice, back_populates='responses')
-
-
-# Survey.responses = relationship('Response', order_by=Response.id, back_populates='survey')
 Respondent.responses = relationship(
     'Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')
-#Choice.responses = relationship('Response', order_by=Response.id, back_populates='respondent')
