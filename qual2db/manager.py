@@ -210,7 +210,8 @@ class QualtricsInterface:
         download_path = self.api_request(
             call=download_call, method='GET', export=True, debug=debug)
 
-        data_file = download_path + '\\' + os.listdir(download_path)[0]
+        #data_file = download_path + '\\' + os.listdir(download_path)[0]
+        data_file = os.path.join(download_path, os.listdir(download_path)[0])
 
         data = open(data_file, 'r')
 
