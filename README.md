@@ -1,4 +1,4 @@
-# qual2db 2.0
+# qual2db 3.0
 A python package that pulls survey data from [Qualtrics](http://www.qualtrics.com/) and transforms it in to a multi-table relational database (Surveys, Blocks, Questions, Choices, Answers, Respondents, Responses).
 
 If using as a library, here is an example of how to run qual2db:
