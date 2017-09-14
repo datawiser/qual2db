@@ -3,6 +3,7 @@ datamodel.py
 """
 from bs4 import BeautifulSoup
 
+import sqlalchemy
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Table, Numeric, Boolean, DateTime
 from sqlalchemy import ForeignKey
