@@ -38,11 +38,7 @@ qual_creds = {
 }
 
 sql_creds = {
-
-    'user': config['MySQL Credentials']['sqlUser'],
-    'password': config['MySQL Credentials']['sqlPassword'],
-    'host': config['MySQL Credentials']['sqlHost'],
-    'db': config['MySQL Credentials']['sqlDB']
+    'constr': config['MySQL Credentials']['constr']
 }
 
 # -----------------------------------------------------------------------
@@ -221,7 +217,7 @@ class QualtricsInterface:
 class SurveyManager(DatabaseInterface, QualtricsInterface):
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, constr, Base=Base):
+    def __init__(self, constr=sql_creds['constr'], Base=Base):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
