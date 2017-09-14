@@ -119,6 +119,9 @@ class DatabaseInterface:
 class QualtricsInterface:
     """Interfaces with qualtrics.com via the API."""
 
+    def __init__(self):
+        pass
+
     def api_request(self, call='surveys', method='GET', parms=None, export=False, debug=False):
         """Makes a api request
 
