@@ -94,7 +94,7 @@ class Question(Base):
     __tablename__ = 'question'
 
     id = Column(Integer, primary_key=True)
-    qid = Column(String((length=50)))
+    qid = Column(String(length=50))
     questionLabel = Column(sqlalchemy.UnicodeText())
     questionText = Column(sqlalchemy.UnicodeText())
     promptText = Column(sqlalchemy.UnicodeText())
