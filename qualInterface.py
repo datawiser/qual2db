@@ -144,6 +144,7 @@ class qualInterface(object):
             # Processing the choices for this question
             for choice in item.findall('Choices/Choice'):
                 cid = choice.get('ID') # This is the qualtrics assigned id
+                cid = cid.replace('x','') # remove 'x' from carry-through question choice IDs
                 crecode = choice.get('Recode')
                 cdesc = choice.find('Description').text
                 
@@ -256,7 +257,7 @@ class qualInterface(object):
         if sqlid==106:
             scores = ['MERITOverallScore','ResidentialLife','ConvivialMeals','RealHome','PhysicalandOrganizationalSupport',
                       'ElderWell_beingandAutonomy','MeaningfulLife','OrganizationalDesign','ShahbazimRole','CollaborativeCulture',
-                      'EmpoweredStaff','EducationalSystems','LeadershipSupport','ModelSupport']
+                      'EmpoweredStaff','EducationalSystems','LeadershipSupport','ModelSupport','BestLife']
             headers = headers+scores
  
 
@@ -299,6 +300,12 @@ class qualInterface(object):
                 else: 
                     parsetag = qid.split('_') # Breaks up the QID tag into parts
                     qid = parsetag[0] # this is the built-in qualtrics id that identifies the question
+
+                    # remove 'x' from choice id in carry-through questions
+                    try:
+                        parsetag[1] = parsetag[1].replace('x','')
+                    except IndexError:
+                        continue
 
                     # This checks if the tag is formatted as a "Loop & Merge" question
                     # if so, it modifies the qid and parsetag to account for the differences
