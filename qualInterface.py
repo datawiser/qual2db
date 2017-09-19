@@ -305,7 +305,7 @@ class qualInterface(object):
                     try:
                         parsetag[1] = parsetag[1].replace('x','')
                     except IndexError:
-                        continue
+                        pass
 
                     # This checks if the tag is formatted as a "Loop & Merge" question
                     # if so, it modifies the qid and parsetag to account for the differences
