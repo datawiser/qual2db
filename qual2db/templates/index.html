@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+<script type="text/javascript" src="../static/js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../static/js/tether.min.js"></script>
+<script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../static/DataTables/datatables.min.js"></script>
+<script type="text/javascript" src="../static/js/qual2db.js"></script>
+<link rel="stylesheet" type="text/css" href="../static/css/tether.min.css">
+<link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="../static/DataTables/datatables.min.css"/>
+<link rel="stylesheet" type="text/css" href="../static/css/style.css">
+
+<title>Qual2db</title>
+</head>
+	<body>
+		<div class="container-fluid">
+			<div class="navbar-header">
+		    </div>
+		    <div class="pageTitle">
+				<h2>Qual2db</h2>
+			</div>
+			<!--<form method="post" action="qualtricsUpdate">-->
+			 	<div class="row">
+			 		<div class="col-md-5">
+			 			<div class="table-title">
+			 				<span>qualtrics Surveys</span>
+			 			</div>
+					    <table class="display" id="qualtrics-table" cellspacing="0">
+						    <thead>
+						    	<tr>
+						    		<th>Check</th>
+							        <th>Survey name</th>
+							        <th>Active</th>
+							        <th>Responses</th>
+							        <th>In database</th>
+							    </tr>
+						    </thead>
+						    <tbody>
+						    </tbody>
+					    </table>
+					</div>
+					<div class="col-md-2 action-col">
+						<span></span>
+						<div>
+							<button class="btn btn-primary action-button" onClick="SyncAll()">Add</button>
+						</div>
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="Schema()">Schema</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="Data()">Data</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="Remove()">Remove</button>
+                        </div>
+						<div>
+							<button class="btn btn-primary action-button">Clear</button>
+						</div>
+					</div>
+					<div class="col-md-5">
+						<div class="table-title">
+							<span>SQL Surveys</span>
+						</div>
+					    <table class="display" id="sql-table" cellspacing="0">
+						    <thead>
+                                <tr>
+                                    <th>Check</th>
+                                    <th>Survey name</th>
+                                    <th>Active</th>
+                                    <th>Responses</th>
+                                    <th>In database</th>
+                                </tr>
+						    </thead>
+						    <tbody>
+						    </tbody>
+					    </table>
+					</div>
+				</div>
+			<!--</form>-->
+		</div>
+	</body>
+</html>

@@ -1,0 +1,23 @@
+.action-button {
+  margin: 15px 0px;
+}
+.action-col {
+  padding: 80px 0px;
+  text-align: center;
+  vertical-align: middle;
+}
+.pageTitle {
+  text-align: center;
+}
+.table-title {
+  font-size: 2em;
+  text-align: center;
+}
+body {
+  font-size: 12px;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.table th {
+  font-size: 1.1em;
+  border-top: none;
+}
