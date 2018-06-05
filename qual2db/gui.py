@@ -1,3 +1,4 @@
+
 import os
 
 import cherrypy
@@ -47,29 +48,12 @@ class Root(object):
             for num in qids:
                 qid = qids[num]
                 if qid in self.surveys_in_db:
-                    pass
-                else:
-                    self.sm.add_survey(qid)
-            for qid in self.surveys_in_db:
-                if qid in qids:
-                    pass
-                else:
-                    self.sm.add_survey(qid)
-                    #s = self.sm.query(Survey).filter(Survey.qid == qid).one()
-                    #self.sm.delete(s)
-                    #self.sm.commit()
-        else:
-            for qid in self.surveys_in_db:
-                if qid in qids:
-                    pass
-                else:
                     s = self.sm.query(Survey).filter(Survey.qid == qid).one()
                     self.sm.delete(s)
                     self.sm.commit()
-
+                self.sm.add_survey(qid)
         self.surveys_in_db = self.sm.survey().qid.tolist()
         return True
-        # cherrypy.InternalRedirect('index')
     
     #Schema
     @cherrypy.expose
@@ -77,64 +61,31 @@ class Root(object):
     @cherrypy.tools.json_in()
     def addQualtricsSurveySchema(self):
         qids = cherrypy.request.json
-        self.surveys_in_db = self.sm.survey().qid.tolist()
         if qids:
             for num in qids:
                 qid = qids[num]
                 if qid in self.surveys_in_db:
-                    pass
-                else:
-                    self.sm.add_survey(qid)
-            for qid in self.surveys_in_db:
-                if qid in qids:
-                    pass
-                else:
                     s = self.sm.query(Survey).filter(Survey.qid == qid).one()
                     self.sm.delete(s)
                     self.sm.commit()
-        else:
-            for qid in self.surveys_in_db:
-                if qid in qids:
-                    pass
-                else:
-                    s = self.sm.query(Survey).filter(Survey.qid == qid).one()
-                    self.sm.delete(s)
-                    self.sm.commit()
-                    
+                self.sm.add_schema(qid)
         self.surveys_in_db = self.sm.survey().qid.tolist()
-        raise cherrypy.InternalRedirect('index')
+        return True
 
+    #Data
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @cherrypy.tools.json_in()
     def addQualtricsSurveyData(self):
         qids = cherrypy.request.json
-        self.surveys_in_db = self.sm.survey().qid.tolist()
         if qids:
             for num in qids:
                 qid = qids[num]
                 if qid in self.surveys_in_db:
-                    pass
-                else:
-                    self.sm.add_survey(qid)
-            for qid in self.surveys_in_db:
-                if qid in qids:
-                    pass
-                else:
-                    s = self.sm.query(Survey).filter(Survey.qid == qid).one()
-                    self.sm.delete(s)
-                    self.sm.commit()
-        else:
-            for qid in self.surveys_in_db:
-                if qid in qids:
-                    pass
-                else:
-                    s = self.sm.query(Survey).filter(Survey.qid == qid).one()
-                    self.sm.delete(s)
-                    self.sm.commit()
-                    
+                    self.sm.delete_data(qid)
+                    self.sm.add_data(qid)
         self.surveys_in_db = self.sm.survey().qid.tolist()
-        raise cherrypy.InternalRedirect('index')
+        return True
     
     #Remove
     @cherrypy.expose
@@ -149,12 +100,22 @@ class Root(object):
                     s = self.sm.query(Survey).filter(Survey.qid == qid).one()
                     self.sm.delete(s)
                     self.sm.commit()
-        else:
-            pass
-        
         self.surveys_in_db = self.sm.survey().qid.tolist()
         return True
-        #raise cherrypy.InternalRedirect('index')
+        
+    #Clear
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @cherrypy.tools.json_in()
+    def clearSqlSurveyData(self):
+        qids = cherrypy.request.json
+        if qids:
+            for num in qids:
+                qid = qids[num]
+                if qid in self.surveys_in_db:
+                    self.sm.delete_data(qid)
+        self.surveys_in_db = self.sm.survey().qid.tolist()
+        return True
     
     @cherrypy.expose
     @cherrypy.tools.json_out()
@@ -170,14 +131,14 @@ class Root(object):
             survey = self.sm.getSurvey(s[0])
             aQualSurvey['Name'] = survey['name']
             aQualSurvey['Qid'] = s[0]
-            aQualSurvey['Responses'] = survey['responseCounts']['auditable']
+            aQualSurvey['Responses'] = (survey['responseCounts']['generated'] + survey['responseCounts']['auditable'] - survey['responseCounts']['deleted'])
             aQualSurvey['Active'] = survey['isActive']
             if s[0] in self.surveys_in_db:
                 aQualSurvey['Indatabase'] = True
             else:
                 aQualSurvey['Indatabase'] = False
+            aQualSurvey['lastmodified'] = survey['lastModifiedDate']
             qualtricsSurveys.append(aQualSurvey)
-
         self.sm.close()
         return qualtricsSurveys
         
@@ -190,7 +151,6 @@ class Root(object):
 
         for sq in self.surveys_in_db:
             aSQLSurvey = {}
-            checked = 'checked'
             survey = self.sm.query(Survey).filter(Survey.qid == sq).one()
             aSQLSurvey['Qid'] = sq
             aSQLSurvey['Name'] = survey.name
@@ -203,7 +163,7 @@ class Root(object):
             else:
                 pass
             aSQLSurvey['Indatabase'] = True
+            aSQLSurvey['lastmodified'] = survey.lastModifiedDate
             sqlSurveys.append(aSQLSurvey)
-
         self.sm.close()
         return sqlSurveys

@@ -37,6 +37,7 @@
 							        <th>Active</th>
 							        <th>Responses</th>
 							        <th>In database</th>
+                                    <th>Last Modified</th>
 							    </tr>
 						    </thead>
 						    <tbody>
@@ -45,9 +46,9 @@
 					</div>
 					<div class="col-md-2 action-col">
 						<span></span>
-						<div>
-							<button class="btn btn-primary action-button" onClick="SyncAll()">Add</button>
-						</div>
+                        <div>
+                            <!--<button class="btn btn-primary action-button" onClick="SyncAll()">Add</button>--><button class="btn btn-primary action-button" onClick="SyncAll()" id="syncall">Add</button>
+                        </div>
                         <div>
                             <button class="btn btn-primary action-button" onClick="Schema()">Schema</button>
                         </div>
@@ -58,7 +59,7 @@
                             <button class="btn btn-primary action-button" onClick="Remove()">Remove</button>
                         </div>
 						<div>
-							<button class="btn btn-primary action-button">Clear</button>
+							<button class="btn btn-primary action-button" onclick="Clear()">Clear</button>
 						</div>
 					</div>
 					<div class="col-md-5">
@@ -73,6 +74,7 @@
                                     <th>Active</th>
                                     <th>Responses</th>
                                     <th>In database</th>
+                                    <th>Last Modified</th>
                                 </tr>
 						    </thead>
 						    <tbody>

@@ -57,22 +57,22 @@ class Survey(Base):
 
         return choices
 
-    def get_subquestions(self):
-        subquestions = dict()
+    def get_answers(self):
+        answers = dict()
         for question in self.questions:
-            for subquestion in question.subquestions:
-                if question.qid not in subquestions.keys():
-                    subquestions[question.qid] = dict()
-                subquestions[question.qid][subquestion.qid] = subquestion
+            for answer in question.answers:
+                if question.qid not in answers.keys():
+                    answers[question.qid] = dict()
+                answers[question.qid][answer.qid] = answer
 
-        return subquestions
+        return answers
 
-    def get_embedded_data(self):
-        embedded_data = dict()
-        for embedded_data in self.embedded_data:
-            embedded_data[embedded_data.name] = embedded_data
+    #def get_embedded_data(self):
+    #    embedded_data = dict()
+    #    for embedded_data in self.embedded_data:
+    #        embedded_data[embedded_data.name] = embedded_data
 
-        return embedded_data
+    #    return embedded_data
 
 
 class Block(Base):
@@ -87,7 +87,7 @@ class Block(Base):
     survey = relationship(Survey, back_populates='blocks')
 
 
-Survey.blocks = relationship('Block', order_by=Block.id, back_populates='survey', cascade='save-update, merge, delete')
+Survey.blocks = relationship('Block', order_by=Block.id, back_populates='survey', cascade='all, delete-orphan')
 
 
 class Question(Base):
@@ -96,6 +96,7 @@ class Question(Base):
     id = Column(Integer, primary_key=True)
     qid = Column(String(length=50))
     questionLabel = Column(sqlalchemy.UnicodeText())
+    questionName = Column(String(length=50))
     questionText = Column(sqlalchemy.UnicodeText())
     promptText = Column(sqlalchemy.UnicodeText())
 
@@ -109,26 +110,26 @@ class Question(Base):
     block = relationship(Block, back_populates='questions')
     survey = relationship(Survey, back_populates='questions')
 
-Survey.questions = relationship('Question', order_by=Question.id, back_populates='survey', cascade='save-update, merge, delete')
-Block.questions = relationship('Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
+Survey.questions = relationship('Question', order_by=Question.id, back_populates='survey', cascade='all, delete-orphan')
+Block.questions = relationship('Question', order_by=Question.id, back_populates='block', cascade='all, delete-orphan')
 
 
-class SubQuestion(Base):
-    __tablename__ = 'subquestion'
+class Answer(Base):
+    __tablename__ = 'answer'
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
 
     variableName = Column(String(length=50))
-    choiceText = Column(String(length=250))
+    choiceText = Column(sqlalchemy.UnicodeText())
     description = Column(sqlalchemy.UnicodeText())
     recode = Column(String(length=50))
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
-    question = relationship(Question, back_populates='subquestions')
+    question = relationship(Question, back_populates='answers')
 
-Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
+Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='all, delete-orphan')
 
 
 class Choice(Base):
@@ -146,20 +147,20 @@ class Choice(Base):
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='choices')
 
-Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
+Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='all, delete-orphan')
 
 
-class EmbeddedData(Base):
-    __tablename__ = 'embedded_data'
+#class EmbeddedData(Base):
+#    __tablename__ = 'embedded_data'
 
-    id = Column(Integer, primary_key=True)
-    name = Column(String(length=50))
-    defaultValue = Column(sqlalchemy.UnicodeText())
+#    id = Column(Integer, primary_key=True)
+#    name = Column(String(length=50))
+#    defaultValue = Column(sqlalchemy.UnicodeText())
 
-    survey_id = Column(Integer, ForeignKey('survey.id'))
-    survey = relationship(Survey, back_populates='embedded_data')
+#    survey_id = Column(Integer, ForeignKey('survey.id'))
+#    survey = relationship(Survey, back_populates='embedded_data')
 
-Survey.embedded_data = relationship('EmbeddedData', order_by=EmbeddedData.id, back_populates='survey', cascade='save-update, merge, delete')
+#Survey.embedded_data = relationship('EmbeddedData', order_by=EmbeddedData.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Respondent(Base):
@@ -189,7 +190,7 @@ class Respondent(Base):
     survey_id = Column(Integer, ForeignKey('survey.id'))
     survey = relationship(Survey, back_populates='respondents')
 
-Survey.respondents = relationship('Respondent', order_by=Respondent.id, back_populates='survey', cascade='save-update, merge, delete')
+Survey.respondents = relationship('Respondent', order_by=Respondent.id, back_populates='survey', cascade='all, delete-orphan')
 
 
 class Response(Base):
@@ -199,11 +200,11 @@ class Response(Base):
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer)
-    subquestion_id = Column(Integer)
+    answer_id = Column(Integer)
     choice_id = Column(Integer)
-    embeddeddata_id = Column(Integer)
+    #embeddeddata_id = Column(Integer)
 
     respondent_id = Column(Integer, ForeignKey('respondent.id'))
     respondent = relationship(Respondent, back_populates='responses')
 
-Respondent.responses = relationship('Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')
+Respondent.responses = relationship('Response', order_by=Response.id, back_populates='respondent', cascade='all, delete-orphan')

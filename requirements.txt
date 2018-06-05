@@ -11,7 +11,7 @@ pandas						#for manager.py
 requests					#for manager.py
 pymysql						#for manager.py
 pyodbc						#for manager.py
-msodbcsql					#need for pyodbc (not installed)
+#msodbcsql					#need for pyodbc (not installed)
 simplejson					#need for json creater
 #
 ###### Requirements with Version Specifiers ######
