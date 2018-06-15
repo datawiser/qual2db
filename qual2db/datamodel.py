@@ -127,7 +127,11 @@ class Answer(Base):
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
+    survey_id = Column(Integer, ForeignKey('survey.id'))
+
     question = relationship(Question, back_populates='answers')
+    # survey = relationship(Survey, back_populates='questions')
+
 
 Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='all, delete-orphan')
 
@@ -145,7 +149,10 @@ class Choice(Base):
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
+    survey_id = Column(Integer, ForeignKey('survey.id'))
+
     question = relationship(Question, back_populates='choices')
+    # survey = relationship(Survey, back_populates='questions')
 
 Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='all, delete-orphan')
 
@@ -205,6 +212,9 @@ class Response(Base):
     #embeddeddata_id = Column(Integer)
 
     respondent_id = Column(Integer, ForeignKey('respondent.id'))
+    survey_id = Column(Integer, ForeignKey('survey.id'))
+
     respondent = relationship(Respondent, back_populates='responses')
+    # survey = relationship(Survey, back_populates='respondents')
 
 Respondent.responses = relationship('Response', order_by=Response.id, back_populates='respondent', cascade='all, delete-orphan')
