@@ -1,5 +1,5 @@
 import inspect
-#import sqlite3
+import sqlite3
 import json
 #import time
 import zipfile
@@ -183,6 +183,7 @@ class QualtricsInterface:
 
     def getSurvey(self, qid, debug=False):
         """Quickly creates a dictionary with basic details about a given survey."""
+        print('GET SURVEY: ' + str(self.api_request(call='surveys/' + qid, debug=debug)))
         schema = self.api_request(call='surveys/' + qid, debug=debug)
         return schema
 
@@ -214,6 +215,7 @@ class QualtricsInterface:
         data_file = os.path.join(download_path, os.listdir(download_path)[0])
 
         data = open(data_file, 'r', encoding='utf8')
+        data_path_folder = os.listdir(self.api_request(call=download_call, method='GET', export=True, debug=debug))[0]
 
         return json.load(data)['responses']
 
@@ -259,8 +261,8 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         """Adds the data to the database."""
         self.connect()
         survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
-        #if not embedded_data_names:
-        #embedded_data_names = self.query(datamodel.Question).filter(datamodel.Question.survey_id == survey.id, datamodel.Question.type == "ED").distinct()
+        # if not embedded_data_names:
+        embedded_data_names = self.query(datamodel.Question).filter(datamodel.Question.survey_id == survey.id, datamodel.Question.type == "ED").distinct()
         schema = self.getSurvey(qid)
         schema_copy = schema['embeddedData']
         for data_row in schema_copy:
@@ -345,7 +347,7 @@ def data_mapper(instance, dictionary, skip_keys=['choices', 'answers'], qid=None
         if isinstance(dictionary_copy[key], dict):
             for sub_key in dictionary_copy[key].keys():
                 if hasattr(instance, sub_key):
-                    setattr(instance, sub_key, dictionary_copy[key][sub_key])
+                   setattr(instance, sub_key, dictionary_copy[key][sub_key])
             drop_keys.append(key)
 
         if isinstance(dictionary_copy[key], list):
@@ -360,7 +362,7 @@ def data_mapper(instance, dictionary, skip_keys=['choices', 'answers'], qid=None
     # find the rest of the fields
     for key in dictionary_copy.keys():
         if hasattr(instance, key):
-            setattr(instance, key, dictionary_copy[key])
+           setattr(instance, key, dictionary_copy[key])
 
     return instance
 
@@ -421,22 +423,22 @@ def build_index(Survey, schema):
     index['questions'] = Survey.get_questions()
     index['answers'] = Survey.get_answers()
     index['choices'] = Survey.get_choices()
-    #index['embedded_data'] = Survey.get_embedded_data()
+    index['embedded_data'] = Survey.get_embedded_data()
     return index
 
 
 def parse_response(index, column, entry):
     response = datamodel.Response()
 
-    # column is a respondnet field
+    # column is a respondent field
     if column in default_respondent_fields:
         return False
 
     #column is embedded data
-    #if column in index['embedded_data']:
-    #    response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
-    #    response.textEntry = entry
-    #    return response
+    if column in index['embedded_data']:
+       response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
+       response.textEntry = entry
+       return response
     if column in embedded_data_names:
         response.question_id = index['questions'][column].id
         response.textEntry = entry
