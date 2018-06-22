@@ -130,11 +130,10 @@ class Answer(Base):
     survey_id = Column(Integer, ForeignKey('survey.id'))
 
     question = relationship(Question, back_populates='answers')
-    # survey = relationship(Survey, back_populates='questions')
-
+    survey = relationship(Survey, back_populates='answers')
 
 Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='all, delete-orphan')
-
+Survey.answers = relationship('Answer', order_by=Answer.id, back_populates='survey', cascade='all, delete-orphan')
 
 class Choice(Base):
     __tablename__ = 'choice'
@@ -152,22 +151,23 @@ class Choice(Base):
     survey_id = Column(Integer, ForeignKey('survey.id'))
 
     question = relationship(Question, back_populates='choices')
-    # survey = relationship(Survey, back_populates='questions')
+    survey = relationship(Survey, back_populates='choices')
 
+Survey.choices = relationship('Choice', order_by=Choice.id, back_populates='survey', cascade='all, delete-orphan')
 Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='all, delete-orphan')
 
-
-#class EmbeddedData(Base):
+#
+# class EmbeddedData(Base):
 #    __tablename__ = 'embedded_data'
-
+#
 #    id = Column(Integer, primary_key=True)
 #    name = Column(String(length=50))
 #    defaultValue = Column(sqlalchemy.UnicodeText())
-
+#
 #    survey_id = Column(Integer, ForeignKey('survey.id'))
 #    survey = relationship(Survey, back_populates='embedded_data')
-
-#Survey.embedded_data = relationship('EmbeddedData', order_by=EmbeddedData.id, back_populates='survey', cascade='save-update, merge, delete')
+#
+# Survey.embedded_data = relationship('EmbeddedData', order_by=EmbeddedData.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Respondent(Base):
@@ -215,6 +215,7 @@ class Response(Base):
     survey_id = Column(Integer, ForeignKey('survey.id'))
 
     respondent = relationship(Respondent, back_populates='responses')
-    # survey = relationship(Survey, back_populates='respondents')
+    survey = relationship(Survey, back_populates='responses')
 
 Respondent.responses = relationship('Response', order_by=Response.id, back_populates='respondent', cascade='all, delete-orphan')
+Survey.responses = relationship('Response', order_by=Response.id, back_populates='survey', cascade='all, delete-orphan')
