@@ -1,6 +1,10 @@
 *.pyc
+<<<<<<< refs/remotes/origin/test
 *.sqlite
 *.db
 *.ini
 \.vs/*
 temp/*
+=======
+config.ini
+>>>>>>> Created requirements.txt, updated .gitignore
