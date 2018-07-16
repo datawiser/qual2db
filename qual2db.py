@@ -4,6 +4,14 @@ from qual2db.gui import Root
 
 DIR = os.path.dirname(os.path.realpath(__file__))
 
+qual_creds = {
+    'baseurl':configurations['Qualtrics_Credentials']['baseurl'],
+    'token':configurations['Qualtrics_Credentials']['Token']
+    }
+
+sql_creds = {
+    'constr':configurations['MySQL_Credentials']['constr']
+    }
 
 def main():
 
