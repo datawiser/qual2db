@@ -57,15 +57,15 @@ class Survey(Base):
 
         return choices
 
-    def get_subquestions(self):
-        subquestions = dict()
+    def get_answers(self):
+        answers = dict()
         for question in self.questions:
-            for subquestion in question.subquestions:
-                if question.qid not in subquestions.keys():
-                    subquestions[question.qid] = dict()
-                subquestions[question.qid][subquestion.qid] = subquestion
+            for answer in question.answers:
+                if question.qid not in answers.keys():
+                    answers[question.qid] = dict()
+                answers[question.qid][answer.qid] = answer
 
-        return subquestions
+        return answers
 
     def get_embedded_data(self):
         embedded_data = dict()
@@ -116,23 +116,22 @@ Block.questions = relationship(
     'Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
 
 
-class SubQuestion(Base):
-    __tablename__ = 'subquestion'
+class Answer(Base):
+    __tablename__ = 'answer'
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
 
     variableName = Column(String(length=50))
-    choiceText = Column(String(length=50))
+    choiceText = Column(sqlalchemy.UnicodeText())
     description = Column(sqlalchemy.UnicodeText())
     recode = Column(String(length=50))
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
-    question = relationship(Question, back_populates='subquestions')
+    question = relationship(Question, back_populates='answers')
 
-Question.subquestions = relationship(
-    'SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
+Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='save-update, merge, delete')
 
 
 class Choice(Base):
@@ -206,7 +205,7 @@ class Response(Base):
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer)
-    subquestion_id = Column(Integer)
+    answer_id = Column(Integer)
     choice_id = Column(Integer)
     embeddeddata_id = Column(Integer)
 

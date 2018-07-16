@@ -270,14 +270,14 @@ def schema_mapper(Survey, schema):
     Survey.questions = entity_mapper(
         datamodel.Question, schema_copy['questions'])
 
-    # add the choices and subquestions to each question
+    # add the choices and answers to each question
     for question in Survey.questions:
         # question.parse_question_text()
         data = schema_copy['questions'][question.qid]
 
         try:
-            question.subquestions = entity_mapper(
-                datamodel.SubQuestion, data['subQuestions'])
+            question.answers = entity_mapper(
+                datamodel.Answer, data['answer'])
         except:
             pass
 
@@ -293,7 +293,7 @@ def schema_mapper(Survey, schema):
     return Survey
 
 
-def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid=None):
+def data_mapper(instance, dictionary, skip_keys=['choices', 'answers'], qid=None):
     dictionary_copy = dictionary.copy()
 
     try:
@@ -364,7 +364,7 @@ def build_index(Survey, schema):
     index = dict()
     index['exportColumnMap'] = schema['exportColumnMap'].copy()
     index['questions'] = Survey.get_questions()
-    index['subquestions'] = Survey.get_subquestions()
+    index['answers'] = Survey.get_answers()
     index['choices'] = Survey.get_choices()
     index['embedded_data'] = Survey.get_embedded_data()
     return index
@@ -390,11 +390,11 @@ def parse_response(index, column, entry):
     response.question_id = question_id
 
     try:
-        subquestion_qid = index['exportColumnMap'][
-            column]['subQuestion'].split('.')[-1]
-        subquestion_id = index['subquestions'][
-            question_qid][int(subquestion_qid)].id
-        response.subquestion_id = subquestion_id
+        answer_qid = index['exportColumnMap'][
+            column]['answer'].split('.')[-1]
+        answer_id = index['answers'][
+            question_qid][int(answer_qid)].id
+        response.answer_id = answer_id
     except:
         pass
 
