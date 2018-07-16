@@ -27,15 +27,19 @@ config_file = os.path.join(package_directory, 'config.ini')
 config = configparser.ConfigParser()
 config.read(config_file)
 
-download_directory = config['Basic']['download_directory']
+tempPath = os.getcwd() + "\\temp\\"
+if not os.path.isdir(tempPath):
+    os.makedirs(tempPath)
+
+download_directory = tempPath
 
 qual_creds = {
-    'baseurl': config['Qualtrics Credentials']['baseurl'],
-    'token': config['Qualtrics Credentials']['Token']
+    'baseurl': config['Qualtrics_Credentials']['baseurl'],
+    'token': config['Qualtrics_Credentials']['Token']
 }
 
 sql_creds = {
-    'constr': config['MySQL Credentials']['constr']
+    'constr': config['MySQL_Credentials']['constr']
 }
 
 # -----------------------------------------------------------------------
