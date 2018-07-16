@@ -2,3 +2,5 @@
 *.sqlite
 *.db
 *.ini
+\.vs/*
+temp/*
