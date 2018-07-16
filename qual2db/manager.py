@@ -60,7 +60,7 @@ default_respondent_fields = [
 ]
 
 # -----------------------------------------------------------------------
-# Mangement Classes
+# Management Classes
 # -----------------------------------------------------------------------
 
 
@@ -101,8 +101,7 @@ class DatabaseInterface:
                 cols = archetype.__table__.columns.keys()
                 data = interface.session.query(archetype).all()
 
-                df = pd.DataFrame([[getattr(i, j) for j in cols] + [i]
-                                   for i in data], columns=cols + ['obj'])
+                df = pd.DataFrame([[getattr(i, j) for j in cols] + [i] for i in data], columns=cols + ['obj'])
             else:
                 df = pd.read_sql_table(table_name, self.engine)
                 if sql:
@@ -192,20 +191,17 @@ class QualtricsInterface:
             parms['lastResponseId'] = last_response
 
         print('Downloading data.')
-        data = self.api_request(call='responseexports/',
-                                method='POST', parms=parms, debug=debug)
+        data = self.api_request(call='responseexports/', method='POST', parms=parms, debug=debug)
         export_id = data['id']
 
         complete = 0
         while complete < 100:
-            progress = self.api_request(
-                call='responseexports/' + export_id, method='GET', debug=debug)
+            progress = self.api_request(call='responseexports/' + export_id, method='GET', debug=debug)
             complete = progress['percentComplete']
             print(complete)
 
         download_call = 'responseexports/' + export_id + '/file'
-        download_path = self.api_request(
-            call=download_call, method='GET', export=True, debug=debug)
+        download_path = self.api_request(call=download_call, method='GET', export=True, debug=debug)
 
         #data_file = download_path + '\\' + os.listdir(download_path)[0]
         data_file = os.path.join(download_path, os.listdir(download_path)[0])
@@ -267,8 +263,7 @@ def schema_mapper(Survey, schema):
     block_map = map_blocks(schema_copy)
     block_index = Survey.get_blocks()
 
-    Survey.questions = entity_mapper(
-        datamodel.Question, schema_copy['questions'])
+    Survey.questions = entity_mapper(datamodel.Question, schema_copy['questions'])
 
     # add the choices and answers to each question
     for question in Survey.questions:
@@ -396,6 +391,7 @@ def parse_response(index, column, entry):
 
     try:
 <<<<<<< refs/remotes/origin/test
+<<<<<<< refs/remotes/origin/test
         subquestion_qid = index['exportColumnMap'][
             column]['subQuestion'].split('.')[-1]
         subquestion_id = index['subquestions'][
@@ -408,6 +404,11 @@ def parse_response(index, column, entry):
             question_qid][int(answer_qid)].id
         response.answer_id = answer_id
 >>>>>>> rename 'subquestion' to 'answer'
+=======
+        subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
+        subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
+        response.subquestion_id = subquestion_id
+>>>>>>> Cosmetic changes to datamodel.py and manager.py
     except:
         pass
 
