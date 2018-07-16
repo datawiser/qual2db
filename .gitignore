@@ -1,8 +1,6 @@
 *.pyc
 *.sqlite
 *.db
-
-
-\.vs/
-
-temp/
+*.ini
+\.vs/*
+temp/*
