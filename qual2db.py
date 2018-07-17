@@ -16,7 +16,7 @@ qual_creds = {
     }
 
 sql_creds = {
-    'constr':configurations['MySQL_Credentials']['constr']
+    'constr':configurations['SQL_Credentials']['constr']
     }
 
 def main():
@@ -36,7 +36,7 @@ def main():
 
     # Create, configure and start application
     app = cherrypy.Application(
-        Root(constr='sqlite:///testing.db'), config=config)
+        Root(constr=sql_creds['constr']), config=config)
     cherrypy.quickstart(app, config=config)
 
 
