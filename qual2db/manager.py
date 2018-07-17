@@ -372,7 +372,7 @@ def build_index(Survey, schema):
 def parse_response(index, column, entry):
     response = datamodel.Response()
 
-    # column is a respondnet field
+    # column is a respondent field
     if column in default_respondent_fields:
         return False
 
