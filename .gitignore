@@ -3,8 +3,13 @@
 *.sqlite
 *.db
 *.ini
+<<<<<<< refs/remotes/origin/test
 \.vs/*
 temp/*
 =======
 config.ini
 >>>>>>> Created requirements.txt, updated .gitignore
+=======
+*.vs/*
+temp/*
+>>>>>>> Update gitignore
