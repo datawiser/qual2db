@@ -39,7 +39,7 @@ qual_creds = {
 }
 
 sql_creds = {
-    'constr': config['MySQL_Credentials']['constr']
+    'constr': config['SQL_Credentials']['constr']
 }
 
 # -----------------------------------------------------------------------
