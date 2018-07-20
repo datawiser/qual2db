@@ -116,8 +116,8 @@ Block.questions = relationship(
     'Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
 
 
-class SubQuestion(Base):
-    __tablename__ = 'subquestion'
+class subquestion(Base):
+    __tablename__ = 'answer'
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
@@ -206,7 +206,7 @@ class Response(Base):
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer)
-    subquestion_id = Column(Integer)
+    answer_id = Column(Integer)
     choice_id = Column(Integer)
     embeddeddata_id = Column(Integer)
 
