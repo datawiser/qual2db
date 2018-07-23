@@ -117,7 +117,7 @@ Block.questions = relationship(
 
 
 class SubQuestion(Base):
-    __tablename__ = 'subquestion'
+    __tablename__ = 'answer'
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
@@ -206,7 +206,7 @@ class Response(Base):
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer)
-    subquestion_id = Column(Integer)
+    answer_id = Column(Integer)
     choice_id = Column(Integer)
     embeddeddata_id = Column(Integer)
 

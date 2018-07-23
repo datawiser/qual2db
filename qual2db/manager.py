@@ -394,7 +394,7 @@ def parse_response(index, column, entry):
             column]['subQuestion'].split('.')[-1]
         subquestion_id = index['subquestions'][
             question_qid][int(subquestion_qid)].id
-        response.subquestion_id = subquestion_id
+        response.answer_id = subquestion_id
     except:
         pass
 
