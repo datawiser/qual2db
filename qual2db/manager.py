@@ -126,7 +126,7 @@ class QualtricsInterface:
         pass
 
     def api_request(self, call='surveys', method='GET', parms=None, export=False, debug=False):
-        """Makes a api request
+        """Makes an api request
 
         Parameters
         ----------
