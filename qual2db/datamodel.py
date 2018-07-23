@@ -57,15 +57,15 @@ class Survey(Base):
 
         return choices
 
-    def get_answers(self):
-        answers = dict()
+    def get_subquestions(self):
+        subquestions = dict()
         for question in self.questions:
-            for answer in question.answers:
-                if question.qid not in answers.keys():
-                    answers[question.qid] = dict()
-                answers[question.qid][answer.qid] = answer
+            for subquestion in question.subquestions:
+                if question.qid not in subquestions.keys():
+                    subquestions[question.qid] = dict()
+                subquestions[question.qid][subquestion.qid] = subquestion
 
-        return answers
+        return subquestions
 
     def get_embedded_data(self):
         embedded_data = dict()
@@ -114,29 +114,37 @@ Block.questions = relationship('Question', order_by=Question.id, back_populates=
 
 
 <<<<<<< refs/remotes/origin/test
+<<<<<<< refs/remotes/origin/test
 class SubQuestion(Base):
 =======
 class Answer(Base):
 >>>>>>> rename 'subquestion' to 'answer'
+=======
+class SubQuestion(Base):
+>>>>>>> Renamed all answers to subquestions except for those references that create labels the user will see.
     __tablename__ = 'answer'
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
 
     variableName = Column(String(length=50))
-    choiceText = Column(sqlalchemy.UnicodeText())
+    choiceText = Column(String(length = 50))
     description = Column(sqlalchemy.UnicodeText())
     recode = Column(String(length=50))
     textEntry = Column(sqlalchemy.UnicodeText())
 
     question_id = Column(Integer, ForeignKey('question.id'))
-    question = relationship(Question, back_populates='answers')
+    question = relationship(Question, back_populates='subquestions')
 
+<<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
 Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='save-update, merge, delete')
 =======
 Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
 >>>>>>> Cosmetic changes to datamodel.py and manager.py
+=======
+Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
+>>>>>>> Renamed all answers to subquestions except for those references that create labels the user will see.
 
 
 class Choice(Base):
