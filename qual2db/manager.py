@@ -63,6 +63,9 @@ default_respondent_fields = [
     'Status'
 ]
 
+global embedded_data_names
+embedded_data_names = []
+
 # -----------------------------------------------------------------------
 # Management Classes
 # -----------------------------------------------------------------------
@@ -123,8 +126,7 @@ class QualtricsInterface:
         pass
 
     def api_request(self, call='surveys', method='GET', parms=None, export=False, debug=False):
-        """Makes a api request
-
+        """Makes an api request
         Parameters
         ----------
         call : the api call
@@ -180,6 +182,7 @@ class QualtricsInterface:
 
     def getSurvey(self, qid, debug=False):
         """Quickly creates a dictionary with basic details about a given survey."""
+        # print('GET SURVEY: ' + str(self.api_request(call='surveys/' + qid,debug=debug))) This prints a lot of information!
         schema = self.api_request(call='surveys/' + qid, debug=debug)
         return schema
 
@@ -211,11 +214,13 @@ class QualtricsInterface:
         data_file = os.path.join(download_path, os.listdir(download_path)[0])
 
         data = open(data_file, 'r')
+        data_path_folder = os.listdir(self.api_request(call=download_call, method = 'GET', export = True, debug = debug))[0]
 
         return json.load(data)['responses']
 
 
 class SurveyManager(DatabaseInterface, QualtricsInterface):
+
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
     def __init__(self, constr=sql_creds['constr'], Base=Base):
@@ -229,29 +234,66 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
     def add_survey(self, qid, replace=False):
         """Adds a survey to the database."""
         self.connect()
-
-        existing = self.query(datamodel.Survey).filter(
-            datamodel.Survey.qid == qid).first()
-
+ 
+        existing = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
+ 
         if existing:
             if not replace:
                 return existing
             else:
                 self.delete(existing)
-
+ 
         schema = self.getSurvey(qid)
         data = self.getData(qid)
-
+ 
         survey = datamodel.Survey()
+        schema = self.getSurvey(qid)
         schema_mapper(survey, schema)
         self.add(survey)
         self.commit()
+ 
+        index = build_index(survey, schema)
+        parse_responses(survey, schema, data)
+        self.add(survey)
+        self.commit()
+        return survey    
+    
+    def add_schema(self, qid):
+        """Adds the schema to the database."""
+        self.connect()
+        survey = datamodel.Survey()
+        schema = self.getSurvey(qid)
+        schema_mapper(survey, schema)
+        self.add(survey)
+        self.commit()
+        return survey
 
+    def add_data(self, qid):
+        """Adds the data to the database."""
+        self.connect()
+        survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
+        # if not embedded_data_names:
+        embedded_data_names = self.query(datamodel.Question).filter(datamodel.Question.survey_id == survey.id, datamodel.Question.type == "ED").distinct()
+        schema = self.getSurvey(qid)
+        schema_copy = schema['embeddedData']
+        for data_row in schema_copy:
+            key = 'name'
+            if (key in data_row.keys()):
+                embedded_data_names.append(data_row[key])
+        data = self.getData(qid)
         index = build_index(survey, schema)
         parse_responses(survey, schema, data)
         self.add(survey)
         self.commit()
         return survey
+        
+    def delete_data(self, qid):
+        self.connect()
+        survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
+        respondents = self.query(datamodel.Respondent).filter(datamodel.Respondent.survey_id == survey.id)
+        for respondent in respondents:
+            self.delete(respondent)
+        self.commit()
 
 # -----------------------------------------------------------------------
 # Data conversion functions
@@ -268,31 +310,36 @@ def schema_mapper(Survey, schema):
     block_index = Survey.get_blocks()
 
     Survey.questions = entity_mapper(datamodel.Question, schema_copy['questions'])
+    Survey.questions += entity_mapper(datamodel.Question, schema_copy['embeddedData'], None, True) #This didn't really do anything, but looks promising
 
-    # add the choices and answers to each question
+    # add the choices and subquestions to each question
     for question in Survey.questions:
         # question.parse_question_text()
-        data = schema_copy['questions'][question.qid]
+        if question.qid not in embedded_data_names:
+            data = schema_copy['questions'][question.qid]
 
-        try:
-            question.answers = entity_mapper(
-                datamodel.Answer, data['answer'])
-        except:
+            try:
+                question.subquestions = entity_mapper(datamodel.SubQuestion, data['subQuestions'])
+                print("### line 324 subquestion entity mapper")
+            except:
+                pass
+
+            try:
+                question.choices = entity_mapper(datamodel.Choice, data['choices'])
+                print("*** line 330 subquestion entity mapper")
+            except:
+                pass
+
+            # add to block
+            related_block = block_map[question.qid]
+            block_index[related_block].questions.append(question)
+        else:
             pass
-
-        try:
-            question.choices = entity_mapper(datamodel.Choice, data['choices'])
-        except:
-            pass
-
-        # add to block
-        related_block = block_map[question.qid]
-        block_index[related_block].questions.append(question)
 
     return Survey
 
 
-def data_mapper(instance, dictionary, skip_keys=['choices', 'answers'], qid=None):
+def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid=None):
     dictionary_copy = dictionary.copy()
 
     try:
@@ -332,19 +379,25 @@ def data_mapper(instance, dictionary, skip_keys=['choices', 'answers'], qid=None
     return instance
 
 
-def entity_mapper(Entity, entity_data, skip_keys=None):
+def entity_mapper(Entity, entity_data, skip_keys=None, embedded_data = False):
     entity_list = []
-    for entity in entity_data:
-        i = Entity()
-        try:
-            data = entity_data[entity]
-        except:
-            data = entity
-        if skip_keys:
-            data_mapper(i, data, skip_keys, qid=entity)
-        else:
-            data_mapper(i, data, qid=entity)
-        entity_list.append(i)
+    if embedded_data == True:
+        for entity in entity_data:
+            i = Entity()
+            embeddedData_mapper(i, entity)
+            entity_list.append(i)
+    else:
+        for entity in entity_data:
+            i = Entity()
+            try:
+                data = entity_data[entity]
+            except:
+                data = entity
+            if skip_keys:
+                data_mapper(i, data, skip_keys, qid=entity)
+            else:
+                data_mapper(i, data, qid=entity)
+            entity_list.append(i)
     return entity_list
 
 
@@ -358,28 +411,48 @@ def map_blocks(schema):
                 block_map[element['questionId']] = block
     return block_map
 
+def embeddedData_mapper(instance, dictionary, skip_keys=None):
+    dictionary_copy = dictionary.copy()
+
+    drop_keys = []
+
+    # find fields with subfields and parse them out
+    key = 'name'
+    if (key in dictionary_copy.keys()):
+        setattr(instance, 'questionText', dictionary_copy.get(key))
+        setattr(instance, 'questionLabel', dictionary_copy.get(key))
+        setattr(instance, 'qid', dictionary_copy.get(key))
+        setattr(instance, 'type', 'ED')
+        embedded_data_names.append(dictionary_copy.get(key))
+
+    print(embedded_data_names)
+    return instance
 
 def build_index(Survey, schema):
     index = dict()
     index['exportColumnMap'] = schema['exportColumnMap'].copy()
     index['questions'] = Survey.get_questions()
-    index['answers'] = Survey.get_answers()
+    index['subquestions'] = Survey.get_subquestions()
     index['choices'] = Survey.get_choices()
     index['embedded_data'] = Survey.get_embedded_data()
+    print(str(index))
     return index
 
 
 def parse_response(index, column, entry):
     response = datamodel.Response()
 
-    # column is a respondent field
+    # column is a respondnet field
     if column in default_respondent_fields:
         return False
 
     # column is embedded data
-    if column in index['embedded_data']:
-        response.embedded_data_id = embedded_data_id = index[
-            'embedded_data'][column].id
+        #if column in index['embedded_data']:
+    #    response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
+    #    response.textEntry = entry
+    #    return response
+    if column in embedded_data_names:
+        response.question_id = index['questions'][column].id
         response.textEntry = entry
         return response
 
@@ -389,11 +462,9 @@ def parse_response(index, column, entry):
     response.question_id = question_id
 
     try:
-        answer_qid = index['exportColumnMap'][
-            column]['answer'].split('.')[-1]
-        answer_id = index['answers'][
-            question_qid][int(answer_qid)].id
-        response.answer_id = answer_id
+        subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
+        subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
+        response.answer_id = subquestion_id
     except:
         pass
 
@@ -407,6 +478,8 @@ def parse_response(index, column, entry):
     if 'TEXT' in column:
         response.textEntry = entry
     elif question_type == 'TE':
+        response.textEntry = entry
+    elif question_type == 'ValidNumber':
         response.textEntry = entry
     else:
         try:
@@ -426,6 +499,7 @@ def parse_responses(Survey, schema, data):
         for record in responses:
             response = parse_response(index, record, responses[record])
             if response:
+                # Populate survey_id column with corresponding survey db id by querying and matching on the qid
                 respondent.responses.append(response)
 
         Survey.respondents.append(respondent)

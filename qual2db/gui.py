@@ -40,11 +40,9 @@ class Root(object):
         surveys = self.sm.listSurveys()
         surveys_in_db = self.sm.survey().qid.tolist()
 
-        survey_row = Template(filename=os.path.join(
-            DIR, 'templates/survey_row.html'))
+        survey_row = Template(filename=os.path.join(DIR, 'templates/survey_row.html'))
 
-        page = Template(filename=os.path.join(
-            DIR, 'templates/login.html'))
+        page = Template(filename=os.path.join(DIR, 'templates/login.html'))
 
         rows = ''
 
@@ -70,8 +68,7 @@ class Root(object):
                 responses = survey['responseCounts']['auditable']
                 active = survey['isActive']
 
-            rows += survey_row.render(qid=qid, name=name,
-                                      responses=responses, active=active, checked=checked)
+            rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, checked=checked)
 
         self.sm.close()
         return page.render(rows=rows)
