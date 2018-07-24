@@ -127,7 +127,6 @@ class QualtricsInterface:
 
     def api_request(self, call='surveys', method='GET', parms=None, export=False, debug=False):
         """Makes an api request
-
         Parameters
         ----------
         call : the api call
@@ -221,6 +220,7 @@ class QualtricsInterface:
 
 
 class SurveyManager(DatabaseInterface, QualtricsInterface):
+
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
     def __init__(self, constr=sql_creds['constr'], Base=Base):
@@ -234,30 +234,30 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
     def add_survey(self, qid, replace=False):
         """Adds a survey to the database."""
         self.connect()
-
+ 
         existing = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
-
+ 
         if existing:
             if not replace:
                 return existing
             else:
                 self.delete(existing)
-
+ 
         schema = self.getSurvey(qid)
         data = self.getData(qid)
-
+ 
         survey = datamodel.Survey()
         schema = self.getSurvey(qid)
         schema_mapper(survey, schema)
         self.add(survey)
         self.commit()
-
+ 
         index = build_index(survey, schema)
         parse_responses(survey, schema, data)
         self.add(survey)
         self.commit()
-        return survey
-
+        return survey    
+    
     def add_schema(self, qid):
         """Adds the schema to the database."""
         self.connect()
@@ -294,7 +294,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         for respondent in respondents:
             self.delete(respondent)
         self.commit()
-
 
 # -----------------------------------------------------------------------
 # Data conversion functions
@@ -347,7 +346,6 @@ def schema_mapper(Survey, schema):
             # add to block
             related_block = block_map[question.qid]
             block_index[related_block].questions.append(question)
-
         else:
             pass
 
@@ -401,9 +399,9 @@ def entity_mapper(Entity, entity_data, skip_keys=None, embedded_data = False):
             i = Entity()
             embeddedData_mapper(i, entity)
             entity_list.append(i)
-        else:
-            for entity in entity_data:
-                i = Entity()
+    else:
+        for entity in entity_data:
+            i = Entity()
             try:
                 data = entity_data[entity]
             except:
@@ -457,17 +455,15 @@ def build_index(Survey, schema):
 def parse_response(index, column, entry):
     response = datamodel.Response()
 
-    # column is a respondent field
+    # column is a respondnet field
     if column in default_respondent_fields:
         return False
 
-    ## column is embedded data
-    #if column in index['embedded_data']:
-    #    response.embedded_data_id = embedded_data_id = index[
-    #        'embedded_data'][column].id
+    # column is embedded data
+        #if column in index['embedded_data']:
+    #    response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
     #    response.textEntry = entry
     #    return response
-
     if column in embedded_data_names:
         response.question_id = index['questions'][column].id
         response.textEntry = entry
@@ -479,6 +475,7 @@ def parse_response(index, column, entry):
     response.question_id = question_id
 
     try:
+<<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
@@ -502,6 +499,10 @@ def parse_response(index, column, entry):
 =======
         subquestion_qid = index['exportColumnMap'][column]['answer'].split('.')[-1]
         subquestio_id = index['subquestions'][question_qid][int(answer_qid)].id
+=======
+        subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
+        subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
+>>>>>>> Working version
         response.answer_id = subquestion_id
 >>>>>>> Merged in all the advances in Master branch
     except:
