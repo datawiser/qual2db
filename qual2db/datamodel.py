@@ -87,7 +87,8 @@ class Block(Base):
     survey = relationship(Survey, back_populates='blocks')
 
 
-Survey.blocks = relationship('Block', order_by=Block.id, back_populates='survey', cascade='save-update, merge, delete')
+Survey.blocks = relationship(
+    'Block', order_by=Block.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Question(Base):
@@ -109,8 +110,10 @@ class Question(Base):
     block = relationship(Block, back_populates='questions')
     survey = relationship(Survey, back_populates='questions')
 
-Survey.questions = relationship('Question', order_by=Question.id, back_populates='survey', cascade='save-update, merge, delete')
-Block.questions = relationship('Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
+Survey.questions = relationship(
+    'Question', order_by=Question.id, back_populates='survey', cascade='save-update, merge, delete')
+Block.questions = relationship(
+    'Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
 
 
 <<<<<<< refs/remotes/origin/test
@@ -128,7 +131,7 @@ class SubQuestion(Base):
     qid = Column(Integer)
 
     variableName = Column(String(length=50))
-    choiceText = Column(String(length = 50))
+    choiceText = Column(String(length=50))
     description = Column(sqlalchemy.UnicodeText())
     recode = Column(String(length=50))
     textEntry = Column(sqlalchemy.UnicodeText())
@@ -138,6 +141,7 @@ class SubQuestion(Base):
 
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
+<<<<<<< refs/remotes/origin/test
 Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='save-update, merge, delete')
 =======
 Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
@@ -145,6 +149,10 @@ Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, bac
 =======
 Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
 >>>>>>> Renamed all answers to subquestions except for those references that create labels the user will see.
+=======
+Question.subquestions = relationship(
+    'SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
+>>>>>>> Working version
 
 
 class Choice(Base):
@@ -162,7 +170,8 @@ class Choice(Base):
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='choices')
 
-Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
+Question.choices = relationship(
+    'Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
 
 
 class EmbeddedData(Base):
@@ -205,7 +214,8 @@ class Respondent(Base):
     survey_id = Column(Integer, ForeignKey('survey.id'))
     survey = relationship(Survey, back_populates='respondents')
 
-Survey.respondents = relationship('Respondent', order_by=Respondent.id, back_populates='survey', cascade='save-update, merge, delete')
+Survey.respondents = relationship(
+    'Respondent', order_by=Respondent.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Response(Base):
@@ -222,4 +232,5 @@ class Response(Base):
     respondent_id = Column(Integer, ForeignKey('respondent.id'))
     respondent = relationship(Respondent, back_populates='responses')
 
-Respondent.responses = relationship('Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')
+Respondent.responses = relationship(
+    'Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')
