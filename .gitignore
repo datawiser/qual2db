@@ -11,5 +11,10 @@ config.ini
 >>>>>>> Created requirements.txt, updated .gitignore
 =======
 *.vs/*
+<<<<<<< refs/remotes/origin/test
 temp/*
 >>>>>>> Update gitignore
+=======
+temp/
+\.vs/
+>>>>>>> Changes to .gitignore and config.
