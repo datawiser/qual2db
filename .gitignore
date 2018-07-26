@@ -1,6 +1,7 @@
 *.pyc
 <<<<<<< refs/remotes/origin/test
 *.sqlite
+<<<<<<< refs/remotes/origin/test
 *.db
 *.ini
 <<<<<<< refs/remotes/origin/test
@@ -10,6 +11,8 @@ temp/*
 config.ini
 >>>>>>> Created requirements.txt, updated .gitignore
 =======
+=======
+>>>>>>> Temporary print statements
 *.vs/*
 <<<<<<< refs/remotes/origin/test
 temp/*

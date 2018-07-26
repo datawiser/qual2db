@@ -35,6 +35,7 @@ class Root(object):
 
     @cherrypy.expose
     def index(self):
+        print('gui-index')
         self.sm.connect()
 
         surveys = self.sm.listSurveys()
@@ -69,12 +70,12 @@ class Root(object):
                 active = survey['isActive']
 
             rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, checked=checked)
-
         self.sm.close()
         return page.render(rows=rows)
 
     @cherrypy.expose
     def update(self, **qids):
+        print('gui-update')
         surveys_in_db = self.sm.survey().qid.tolist()
         if qids:
             for qid in qids:
@@ -102,4 +103,5 @@ class Root(object):
 
     @cherrypy.expose
     def home(self, username):
+        print('gui-home')
         return username

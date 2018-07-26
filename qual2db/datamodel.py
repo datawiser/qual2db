@@ -15,7 +15,7 @@ Base = declarative_base()
 
 class Survey(Base):
     __tablename__ = 'survey'
-
+    print('datamodel-Survey')
     id = Column(Integer, primary_key=True)
     qid = Column(String(length=50))
     name = Column(String(length=50))  # , unique=True)
@@ -34,6 +34,7 @@ class Survey(Base):
     startDate = Column(String(length=50))
 
     def get_blocks(self):
+        print('datamodel-get_blocks')
         blocks = dict()
         for block in self.blocks:
             blocks[block.qid] = block
@@ -41,6 +42,7 @@ class Survey(Base):
         return blocks
 
     def get_questions(self):
+        print('datamodel-get_questions')
         questions = dict()
         for question in self.questions:
             questions[question.qid] = question
@@ -48,6 +50,7 @@ class Survey(Base):
         return questions
 
     def get_choices(self):
+        print('datamodel-get_choices')
         choices = dict()
         for question in self.questions:
             for choice in question.choices:
@@ -58,6 +61,7 @@ class Survey(Base):
         return choices
 
     def get_subquestions(self):
+        print('datamodel-get_subquestions')
         subquestions = dict()
         for question in self.questions:
             for subquestion in question.subquestions:
@@ -68,6 +72,7 @@ class Survey(Base):
         return subquestions
 
     def get_embedded_data(self):
+        print('datamodel-get_embedded_data')
         embedded_data = dict()
         for embedded_data in self.embedded_data:
             embedded_data[embedded_data.name] = embedded_data
@@ -77,6 +82,7 @@ class Survey(Base):
 
 class Block(Base):
     __tablename__ = 'block'
+    print('datamodel-Block')
 
     id = Column(Integer, primary_key=True)
     qid = Column(String(length=50))
@@ -87,16 +93,17 @@ class Block(Base):
     survey = relationship(Survey, back_populates='blocks')
 
 
-Survey.blocks = relationship(
-    'Block', order_by=Block.id, back_populates='survey', cascade='save-update, merge, delete')
+Survey.blocks = relationship('Block', order_by=Block.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Question(Base):
     __tablename__ = 'question'
+    print('datamodel-Question')
 
     id = Column(Integer, primary_key=True)
     qid = Column(String(length=50))
     questionLabel = Column(sqlalchemy.UnicodeText())
+    questionName = Column(String(length = 50))
     questionText = Column(sqlalchemy.UnicodeText())
     promptText = Column(sqlalchemy.UnicodeText())
 
@@ -110,10 +117,8 @@ class Question(Base):
     block = relationship(Block, back_populates='questions')
     survey = relationship(Survey, back_populates='questions')
 
-Survey.questions = relationship(
-    'Question', order_by=Question.id, back_populates='survey', cascade='save-update, merge, delete')
-Block.questions = relationship(
-    'Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
+Survey.questions = relationship('Question', order_by=Question.id, back_populates='survey', cascade='save-update, merge, delete')
+Block.questions = relationship('Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
 
 
 <<<<<<< refs/remotes/origin/test
@@ -126,12 +131,13 @@ class Answer(Base):
 class SubQuestion(Base):
 >>>>>>> Renamed all answers to subquestions except for those references that create labels the user will see.
     __tablename__ = 'answer'
+    print('datamodel-SubQuestion')
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
 
     variableName = Column(String(length=50))
-    choiceText = Column(String(length=50))
+    choiceText = Column(sqlalchemy.UnicodeText())
     description = Column(sqlalchemy.UnicodeText())
     recode = Column(String(length=50))
     textEntry = Column(sqlalchemy.UnicodeText())
@@ -139,6 +145,7 @@ class SubQuestion(Base):
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='subquestions')
 
+<<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
@@ -153,10 +160,14 @@ Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, bac
 Question.subquestions = relationship(
     'SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
 >>>>>>> Working version
+=======
+Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
+>>>>>>> Temporary print statements
 
 
 class Choice(Base):
     __tablename__ = 'choice'
+    print('datamodel-Choice')
 
     id = Column(Integer, primary_key=True)
     qid = Column(Integer)
@@ -170,12 +181,12 @@ class Choice(Base):
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='choices')
 
-Question.choices = relationship(
-    'Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
+Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
 
 
 class EmbeddedData(Base):
     __tablename__ = 'embedded_data'
+    print('datamodel-EmbeddedData')
 
     id = Column(Integer, primary_key=True)
     name = Column(String(length=50))
@@ -189,6 +200,7 @@ Survey.embedded_data = relationship('EmbeddedData', order_by=EmbeddedData.id, ba
 
 class Respondent(Base):
     __tablename__ = 'respondent'
+    print('datamodel-Respondent')
 
     id = Column(Integer, primary_key=True)
 
@@ -214,12 +226,12 @@ class Respondent(Base):
     survey_id = Column(Integer, ForeignKey('survey.id'))
     survey = relationship(Survey, back_populates='respondents')
 
-Survey.respondents = relationship(
-    'Respondent', order_by=Respondent.id, back_populates='survey', cascade='save-update, merge, delete')
+Survey.respondents = relationship('Respondent', order_by=Respondent.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Response(Base):
     __tablename__ = 'response'
+    print('datamodel-Response')
 
     id = Column(Integer, primary_key=True)
     textEntry = Column(sqlalchemy.UnicodeText())
