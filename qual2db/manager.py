@@ -320,13 +320,13 @@ def schema_mapper(Survey, schema):
 
             try:
                 question.subquestions = entity_mapper(datamodel.SubQuestion, data['subQuestions'])
-                print("### line 324 subquestion entity mapper")
+                #print("### line 324 subquestion entity mapper")
             except:
                 pass
 
             try:
                 question.choices = entity_mapper(datamodel.Choice, data['choices'])
-                print("*** line 330 subquestion entity mapper")
+                #print("*** line 330 subquestion entity mapper")
             except:
                 pass
 
@@ -425,7 +425,7 @@ def embeddedData_mapper(instance, dictionary, skip_keys=None):
         setattr(instance, 'type', 'ED')
         embedded_data_names.append(dictionary_copy.get(key))
 
-    print(embedded_data_names)
+    #print(embedded_data_names)
     return instance
 
 def build_index(Survey, schema):
@@ -435,7 +435,7 @@ def build_index(Survey, schema):
     index['subquestions'] = Survey.get_subquestions()
     index['choices'] = Survey.get_choices()
     index['embedded_data'] = Survey.get_embedded_data()
-    print(str(index))
+    #print(str(index))
     return index
 
 
