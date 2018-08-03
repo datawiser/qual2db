@@ -98,7 +98,7 @@ class Root(object):
                     s = self.sm.query(Survey).filter(Survey.qid == qid).one()
                     self.sm.delete(s)
                     self.sm.commit()
-
+        
         raise cherrypy.InternalRedirect('index')
 
     @cherrypy.expose

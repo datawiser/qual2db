@@ -65,7 +65,6 @@ default_respondent_fields = [
 
 global embedded_data_names
 embedded_data_names = []
-print('manager-embedded_data_names')
 
 # -----------------------------------------------------------------------
 # Management Classes
@@ -89,7 +88,6 @@ class DatabaseInterface:
                     continue
 
     def __getattr__(self, name):
-        print("manager-getattr")
         return getattr(self.__session, name)
 
     def close(self):
@@ -99,12 +97,11 @@ class DatabaseInterface:
             self.__session = None
 
     def connect(self):
-        print("manager-connect")
         self.close()
         self.__session = self.SessionMaker()
 
     def bind_table(self, table_name):
-        print("manager-bind_table")
+ 
         """Binds a database table to a function for retriving a pandas dataframe view of the database"""
         def get_table(interface=self, table=table_name, sql=None, obj=False):
             if obj:
@@ -120,7 +117,7 @@ class DatabaseInterface:
             return df
 
         get_table.__name__ = table_name
-        print(get_table)
+        
         return get_table
         
 
@@ -132,7 +129,7 @@ class QualtricsInterface:
         pass
 
     def api_request(self, call='surveys', method='GET', parms=None, export=False, debug=False):
-        print("manager-api_request")
+
         """Makes an api request
         Parameters
         ----------
@@ -187,8 +184,6 @@ class QualtricsInterface:
             active = survey['isActive']
 
             survey_list.append([qid, name, active])
-        #print('printing survey_list')
-        #print(survey_list)
         return survey_list
 
     def getSurvey(self, qid, debug=False):
@@ -227,7 +222,7 @@ class QualtricsInterface:
         data_file = os.path.join(download_path, os.listdir(download_path)[0])
 
         data = open(data_file, 'r', encoding = 'utf-8')
-        data_path_folder = os.listdir(self.api_request(call=download_call, method = 'GET', export = True, debug = debug))[0]
+        data_path_folder = os.listdir(self.api_request(call=download_call, method = 'GET', export = True, debug = debug))[0]        
         
         return json.load(data)['responses']
 
@@ -294,8 +289,7 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         self.connect()
         survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
         # if not embedded_data_names:
-        embedded_data_names = self.query(datamodel.Question).filter(datamodel.Question.survey_id == survey.id, datamodel.Question.type == "ED").distinct()
-        #print(embedded_data_names)
+        #embedded_data_names = self.query(datamodel.Question).filter(datamodel.Question.survey_id == survey.id, datamodel.Question.type == "ED").distinct()
         schema = self.getSurvey(qid)
         schema_copy = schema['embeddedData']
         for data_row in schema_copy:
@@ -308,8 +302,8 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         self.add(survey)
         self.commit()
 
-        print('printing survey')
-        print(survey)
+        print('printing embedded_data_names manager line 309')
+        print(embedded_data_names)
         return survey
         
     def delete_data(self, qid):
@@ -330,14 +324,14 @@ def schema_mapper(Survey, schema):
     print("manager-schema_mapper")
     # map survey attributes
     schema_copy = schema.copy()
-    data_mapper(Survey, schema_copy)
+    mapped_data = data_mapper(Survey, schema_copy) #returns Survey object with fields. 
 
     Survey.blocks = entity_mapper(datamodel.Block, schema_copy['blocks'])
     block_map = map_blocks(schema_copy)
     block_index = Survey.get_blocks()
 
     Survey.questions = entity_mapper(datamodel.Question, schema_copy['questions'])
-    Survey.questions += entity_mapper(datamodel.Question, schema_copy['embeddedData'], None, True) #This didn't really do anything, but looks promising
+    Survey.questions += entity_mapper(datamodel.Question, schema_copy['embeddedData'], None, True) #Adds embedded data as Question
 
     # add the choices and subquestions to each question
     for question in Survey.questions:
@@ -386,26 +380,26 @@ def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid
     dictionary_copy = dictionary.copy()
 
     try:
-        dictionary_copy['qid'] = dictionary_copy.pop('id')
+        dictionary_copy['qid'] = dictionary_copy.pop('id') #creates qid category in dictionary_copy and places the qualtrics id (id) in it
     except:
         dictionary_copy['qid'] = str(qid)
 
     drop_keys = []
 
     # find fields with subfields and parse them out
-    for key in dictionary_copy.keys():
+    for key in dictionary_copy.keys(): #finds keys in dictionary_copy
 
-        if key in skip_keys:
+        if key in skip_keys: #if keys in dictionary_copy are choices or subQuestions, then add them to drop_keys
             drop_keys.append(key)
             continue
 
-        if isinstance(dictionary_copy[key], dict):
+        if isinstance(dictionary_copy[key], dict): # checking to see if there are more keys left in dictionary form in dictionary_copy
             for sub_key in dictionary_copy[key].keys():
                 if hasattr(instance, sub_key):
                     setattr(instance, sub_key, dictionary_copy[key][sub_key])
             drop_keys.append(key)
 
-        if isinstance(dictionary_copy[key], list):
+        if isinstance(dictionary_copy[key], list): #checking to see if there are more keys left in list form in dictionary_copy
             if hasattr(instance, key):
                 setattr(instance, key, len(dictionary_copy[key]))
             drop_keys.append(key)
@@ -419,8 +413,6 @@ def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid
         if hasattr(instance, key):
             setattr(instance, key, dictionary_copy[key])
 
-    print('printing instance')
-    print(instance)
     return instance
 
 
@@ -445,8 +437,6 @@ def entity_mapper(Entity, entity_data, skip_keys=None, embedded_data = False):
                 data_mapper(i, data, qid=entity)
             entity_list.append(i)
 
-    print('printing entity_list')
-    print(entity_list)
     return entity_list
 
 
@@ -474,26 +464,22 @@ def embeddedData_mapper(instance, dictionary, skip_keys=None):
     key = 'name'
     if (key in dictionary_copy.keys()):
         setattr(instance, 'questionText', dictionary_copy.get(key))
-        setattr(instance, 'questionLabel', dictionary_copy.get(key))
+        setattr(instance, 'questionName', dictionary_copy.get(key))
         setattr(instance, 'qid', dictionary_copy.get(key))
         setattr(instance, 'type', 'ED')
         embedded_data_names.append(dictionary_copy.get(key))
     
-    print('printing embedded_data_names')
-    print(embedded_data_names)
+
     return instance
 
 def build_index(Survey, schema):
-    print("manager-build_index")
     index = dict()
     index['exportColumnMap'] = schema['exportColumnMap'].copy()
     index['questions'] = Survey.get_questions()
     index['subquestions'] = Survey.get_subquestions()
     index['choices'] = Survey.get_choices()
-    index['embedded_data'] = Survey.get_embedded_data()
+    #index['embedded_data'] = Survey.get_embedded_data()
     
-    print('printing index')
-    print(str(index))
     return index
 
 
@@ -510,6 +496,8 @@ def parse_response(index, column, entry):
     #    response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
     #    response.textEntry = entry
     #    return response
+
+    # This is the part that adds embedded_data_names to responses table and adds the entry
     if column in embedded_data_names:
         response.question_id = index['questions'][column].id
         response.textEntry = entry
