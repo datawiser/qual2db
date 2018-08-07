@@ -168,8 +168,6 @@ class QualtricsInterface:
         except:
             return response.text
 
-        #print('***printing data["result"]')
-        #print(data['result'])
         return data['result']
 
     def listSurveys(self, debug=False):
