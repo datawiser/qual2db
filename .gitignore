@@ -20,4 +20,8 @@ temp/*
 =======
 temp/
 \.vs/
+<<<<<<< refs/remotes/origin/test
 >>>>>>> Changes to .gitignore and config.
+=======
+databases/
+>>>>>>> Edit gitignore and databases
