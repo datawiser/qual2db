@@ -15,6 +15,7 @@ config.ini
 >>>>>>> Temporary print statements
 *.vs/*
 <<<<<<< refs/remotes/origin/test
+<<<<<<< refs/remotes/origin/test
 temp/*
 >>>>>>> Update gitignore
 =======
@@ -25,3 +26,9 @@ temp/
 =======
 databases/
 >>>>>>> Edit gitignore and databases
+=======
+\.vs/
+
+
+temp/
+>>>>>>> Scores are working
