@@ -516,13 +516,13 @@ def parse_response(index, column, entry):
         return False
 
     # column is embedded data
-    #if column in index['embedded_data']:
+    #elif column in index['embedded_data']:
     #    response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
     #    response.textEntry = entry
     #    return response
 
     # This is the part that adds embedded_data_names to responses table and adds the entry
-    if column in embedded_data_names:
+    elif column in embedded_data_names:
         response.question_id = index['questions'][column].id
         response.textEntry = entry
         return response
