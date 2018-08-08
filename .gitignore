@@ -1,6 +1,7 @@
 *.pyc
 *.sqlite
 *.vs/*
-temp/
 \.vs/
-databases/
+
+
+temp/

@@ -249,10 +249,39 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
                 return existing
             else:
                 self.delete(existing)
- 
+
         schema = self.getSurvey(qid)
         data = self.getData(qid)
- 
+        keys_schema = []
+        keys_data = []
+
+        for i in schema['embeddedData']:
+            for key,value in i.items():
+                if key == 'name':
+                    if value in keys_schema:
+                        pass
+                    else:
+                        keys_schema.append(value)
+
+        for i in schema['exportColumnMap']:
+            keys_schema.append(i)
+
+        for i in data:
+            for key,value in i.items():
+                if key in keys_data:
+                    pass
+                else:
+                    keys_data.append(key)
+  
+        data_names = []
+        data_names = (list(set(keys_data) - set(keys_schema) - set(default_respondent_fields))) # Use a more specific name instead of data_names (data_names_not_in_schema?)
+
+        for i in data_names:
+            embedded_data_names.append(i)
+      
+        for i in data_names:
+            schema['embeddedData'].append({'name':i})
+        
         survey = datamodel.Survey()
         schema_mapper(survey, schema)
         self.add(survey)
@@ -300,8 +329,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         self.add(survey)
         self.commit()
 
-        print('printing embedded_data_names manager line 309')
-        print(embedded_data_names)
         return survey
         
     def delete_data(self, qid):
@@ -454,7 +481,6 @@ def embeddedData_mapper(instance, dictionary, skip_keys=None):
         setattr(instance, 'type', 'ED')
         embedded_data_names.append(dictionary_copy.get(key))
     
-
     return instance
 
 def build_index(Survey, schema):
