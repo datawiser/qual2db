@@ -2,9 +2,13 @@
     <td>${name}</td>
     <td>${active}</td>
     <td>${responses}</td>
-    <td>${size}</td>
-    <td>
+    <td>${size}
+        <svg height="5" display="inline" max-width="150px">
+            <rect x="0" y="0" width="calc(${size}/1000)" height="5" />
+        </svg>
+    </td>
 
+    <td>
         <label class="switch">
             <input name="${qid}" type="checkbox" ${checked}>
             <span class="slider round"></span>
