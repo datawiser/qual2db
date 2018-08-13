@@ -55,6 +55,8 @@ class Root(object):
                 qid = s[0]
                 name = survey.name
                 responses = str(len(survey.respondents))
+                questions = str(len(survey.questions))
+                size=int(responses)*int(questions)
                 active = survey.isActive
                 if active == '1':
                     active = True
@@ -62,7 +64,7 @@ class Root(object):
                     return False
                 else:
                     pass
-                in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, checked=checked) 
+                in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked,) 
 
             else:
                 checked = ''
@@ -70,8 +72,10 @@ class Root(object):
                 qid = s[0]
                 name = survey['name']
                 responses = survey['responseCounts']['auditable']
+                questions = str(len(survey['questions'])) 
+                size=int(questions)*int(responses)
                 active = survey['isActive']
-                not_in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, checked=checked) 
+                not_in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked) 
 
         self.sm.close()
         return page.render(not_in_db_rows=not_in_db_rows, in_db_rows=in_db_rows) 
