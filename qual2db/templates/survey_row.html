@@ -1,17 +1,15 @@
 <tr>
-    <td class="tooltip">${name}
-        <span class="tooltiptext">
-            active: ${active}
-            responses: ${responses}
-            size: ${size}
-            <svg height="5" display="inline" max-width="150px"> <rect display="inline" style="fill:purple" x="0" y="0" width="calc(${size}/1000)" height="5" /> </svg>
-        </span>
+    <td class="tooltip">
+        ${name}
     </td>
-
     <td>
         <label class="switch">
             <input name="${qid}" type="checkbox" ${checked}>
             <span class="slider round"></span>
         </label>
+    </td>
+    <td class="tooltiptext" style="background:grey">
+        ${responses} responses, active: ${active}<br>
+        size: <svg height="5" display="inline" max-width="150px"> <rect display="inline" style="fill:purple" x="0" y="0" width="calc(${size}/1000)" height="5" /> </svg>
     </td>
 </tr>
