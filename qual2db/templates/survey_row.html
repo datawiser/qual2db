@@ -8,8 +8,16 @@
             <span class="slider round"></span>
         </label>
     </td>
-    <td class="tooltiptext" style="background:grey">
-        ${responses} responses, active: ${active}<br>
-        size: <svg height="5" display="inline" max-width="150px"> <rect display="inline" style="fill:purple" x="0" y="0" width="calc(${size}/1000)" height="5" /> </svg>
+    <td class="tooltiptext" style="background:#bbb">
+        ${responses} responses, <span id="is_active_text-${qid}"></span><br>
+        size: <svg height="5" display="inline" max-width="150px"> <rect id="data_graphic-${qid}" display="inline" style="fill:purple" x="0" y="0" width="100" height="5" /> </svg>
     </td>
 </tr>
+<script>
+    log_width = Math.log10(${ size } + 1);
+    var is_active_text = ('${ active }' == 'True' ? "Active" : "Inactive");
+    var is_active_color = ('${ active }' == 'True' ? "green" : "red");
+    document.getElementById("is_active_text-${qid}").innerHTML = is_active_text;
+    document.getElementById('is_active_text-${qid}').style.color = is_active_color;
+    document.getElementById('data_graphic-${qid}').style.width = log_width * 30;
+</script>
