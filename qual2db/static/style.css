@@ -12,7 +12,7 @@ th {
 /* Tooltip text */
 .tooltiptext {
     visibility: hidden;
-    background-color: black;
+    background: grey;
     color: #fff;
     text-align: left;
     padding: 5px 0;
