@@ -45,7 +45,8 @@ class Root(object):
 
         page = Template(filename=os.path.join(DIR, 'templates/login.html'))
 
-        rows = ''
+        in_db_rows = '' 
+        not_in_db_rows = '' 
 
         for s in surveys:
             if s[0] in surveys_in_db:
@@ -54,6 +55,8 @@ class Root(object):
                 qid = s[0]
                 name = survey.name
                 responses = str(len(survey.respondents))
+                questions = str(len(survey.questions))
+                size=int(responses)*int(questions)
                 active = survey.isActive
                 if active == '1':
                     active = True
@@ -61,17 +64,21 @@ class Root(object):
                     return False
                 else:
                     pass
+                in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked,) 
+
             else:
                 checked = ''
                 survey = self.sm.getSurvey(s[0])
                 qid = s[0]
                 name = survey['name']
                 responses = survey['responseCounts']['auditable']
+                questions = str(len(survey['questions'])) 
+                size=int(questions)*int(responses)
                 active = survey['isActive']
+                not_in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked) 
 
-            rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, checked=checked)
         self.sm.close()
-        return page.render(rows=rows)
+        return page.render(not_in_db_rows=not_in_db_rows, in_db_rows=in_db_rows) 
 
     @cherrypy.expose
     def update(self, **qids):
