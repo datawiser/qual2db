@@ -28,7 +28,8 @@
             </div>
             <div class="w3-col w3-container s12 m12 l2">
                 <div style="position:fixed">
-                    <button type="submit" class="pure-button pure-button-primary">Save</button>
+                    <button type="submit" onclick="loadSpinner()" class="pure-button pure-button-primary">Save</button>
+                    <div id="loader" style="display:none"></div>
                 </div>
             </div>
             <div class="w3-col w3-container s12 m12 l5">
@@ -44,5 +45,10 @@
             </div>
         </div>
     </form>
+    <script>
+        function loadSpinner() {
+            document.getElementById('loader').style.display = "block";
+        }
+    </script>
 </body>
 </html>
