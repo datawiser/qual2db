@@ -39,4 +39,9 @@ temp/
 =======
 
 temp/
+<<<<<<< refs/remotes/origin/test
 >>>>>>> Added datatables and layout changes
+=======
+
+qual2db/databases/
+>>>>>>> Bool not iterable problem
