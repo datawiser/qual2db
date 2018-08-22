@@ -25,9 +25,8 @@
 <body>
     <header>Qual2db 3.0.x</header>
 
-    <div class="container-fluid">
-        <form method="post" action="update">
-
+    <form method="post" action="update">
+        <div class="container-fluid">
             <div class="w3-row-padding">
                 <!-- In Qualtrics -->
                 <div class="w3-col w3-container s12 m12 l5">
@@ -46,12 +45,18 @@
                         </table>
                     </div>
                 </div>
-             
+
                 <!-- Menu Panel -->
+
                 <div class="w3-col w3-container s12 m12 l2">
-                    <div class="w3-card w3-padding w3-margin text-center">
+                    <div class="w3-card-4">
+                        <header class="w3-container w3-blue w3-center">
+                            <h4>Action Panel</h4>
+                        </header>
+                        <div class="w3-container w3-center">
                             <button type="submit" onclick="loadSpinner()" class="pure-button pure-button-primary">Save</button>
                             <div id="loader" style="display:none"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -73,7 +78,7 @@
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
+        </div>
+    </form>
 </body>
 </html>

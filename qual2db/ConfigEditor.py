@@ -20,7 +20,7 @@ def sqlite_name_generator(root=root1,name='test'):
     now = datetime.datetime.now()
     name = r'\qual2db\databases\test'
     date_time = now.strftime("%Y_%m_%d_%H_%M_%S")
-    constr = r'sqlite:///'+ root + name + date_time + '.db'
+    constr = r'sqlite:///'+ root + name + date_time + '.db?check_same_thread=False'
 
     return(constr)
 
