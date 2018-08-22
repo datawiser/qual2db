@@ -14,6 +14,7 @@ from sqlalchemy.orm import scoped_session
 
 from qual2db.datamodel import Base
 from qual2db import datamodel
+from qual2db.ConfigEditor import *
 
 Session = sessionmaker()
 
@@ -33,13 +34,21 @@ if not os.path.isdir(tempPath):
 
 download_directory = tempPath
 
+databases = ['MySQL','SQLite']
+
+config_editor(databases)
+
 qual_creds = {
     'baseurl': config['Qualtrics_Credentials']['baseurl'],
     'token': config['Qualtrics_Credentials']['Token']
 }
 
-sql_creds = {
-    'constr': config['SQL_Credentials']['constr']
+sqlite_creds = {
+    'constr': config['SQLite_Credentials']['constr']
+}
+
+mysql_creds = {
+    'constr': config['MySQL_Credentials']['constr']
 }
 
 # -----------------------------------------------------------------------
@@ -229,7 +238,7 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
 
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, constr=sql_creds['constr'], Base=Base):
+    def __init__(self, constr=sqlite_creds['constr'], Base=Base):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
