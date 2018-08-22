@@ -30,33 +30,33 @@
 
             <div class="w3-row-padding">
                 <!-- In Qualtrics -->
-                <div class="w3-third">
-                    <table id="qualtrics-table" class="display">
-                        <thead>
-                            <tr>
-                                <th>Survey Name</th>
-                                <th>In Database</th>
-                                <th>Details</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${not_in_db_rows}
-                        </tbody>
-                    </table>
+                <div class="w3-col w3-container s12 m12 l5">
+                    <div class="w3-card">
+                        <table id="qualtrics-table" class="display" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Survey Name</th>
+                                    <th>In Database</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${not_in_db_rows}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
              
                 <!-- Menu Panel -->
-                <div class="w3-third">
-                    <div class="w3-card-padding w3-margin text-center">
-                        <div style="position:fixed">
+                <div class="w3-col w3-container s12 m12 l2">
+                    <div class="w3-card w3-padding w3-margin text-center">
                             <button type="submit" onclick="loadSpinner()" class="pure-button pure-button-primary">Save</button>
                             <div id="loader" style="display:none"></div>
-                        </div>
                     </div>
                 </div>
 
                 <!-- In SQL Database -->
-                <div class="w3-third">
+                <div class="w3-col w3-container s12 m12 l5">
                     <div class="w3-card">
                         <table id="exported-table" class="display" style="width:100%">
                             <thead>
@@ -72,7 +72,6 @@
                         </table>
                     </div>
                 </div>
-
             </div>
         </form>
     </div>

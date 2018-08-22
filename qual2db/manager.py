@@ -180,7 +180,6 @@ class QualtricsInterface:
         return data['result']
 
     def listSurveys(self, debug=False):
-        print("manager-listSurveys")
         """Creates a list of surveys the API account has access to."""
         data = self.api_request(call='surveys', debug=debug)
 
@@ -194,14 +193,12 @@ class QualtricsInterface:
         return survey_list
 
     def getSurvey(self, qid, debug=False):
-        print("manager-getSurvey")
         """Quickly creates a dictionary with basic details about a given survey."""
         # print('GET SURVEY: ' + str(self.api_request(call='surveys/' + qid,debug=debug))) This prints a lot of information!
         schema = self.api_request(call='surveys/' + qid, debug=debug)
         return schema
 
     def getData(self, qid, last_response=None, debug=False):
-        print("manager-getData")
         """Gets survey data."""
 
         parms = {
@@ -247,7 +244,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
             setattr(self, table, func)
 
     def add_survey(self, qid, replace=False):
-        print("manager-add_survey")
         """Adds a survey to the database."""
         self.connect()
  
@@ -306,7 +302,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         return survey    
     
     def add_schema(self, qid):
-        print("manager-add_Schema")
         """Adds the schema to the database."""
         self.connect()
         survey = datamodel.Survey()
@@ -320,7 +315,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         return survey
 
     def add_data(self, qid):
-        print("manager-add_data")
         """Adds the data to the database."""
         self.connect()
         survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
@@ -341,7 +335,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         return survey
         
     def delete_data(self, qid):
-        print("manager-delete_data")
         self.connect()
         survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
         respondents = self.query(datamodel.Respondent).filter(datamodel.Respondent.survey_id == survey.id)
@@ -355,7 +348,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
 
 
 def schema_mapper(Survey, schema):
-    print("manager-schema_mapper")
     # map survey attributes
     schema_copy = schema.copy()
     mapped_data = data_mapper(Survey, schema_copy) #returns Survey object with fields. 
@@ -391,13 +383,10 @@ def schema_mapper(Survey, schema):
         else:
             pass
 
-    print('printing Survey')
-    print(Survey)
     return Survey
 
 
 def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid=None):
-    print("manager-data_mapper")
     dictionary_copy = dictionary.copy()
 
     try:
@@ -438,7 +427,6 @@ def data_mapper(instance, dictionary, skip_keys=['choices', 'subQuestions'], qid
 
 
 def entity_mapper(Entity, entity_data, skip_keys=None, embedded_data = False):
-    print("manager-entity_mapper")
     entity_list = []
     if embedded_data == True:
         for entity in entity_data:
@@ -462,7 +450,6 @@ def entity_mapper(Entity, entity_data, skip_keys=None, embedded_data = False):
 
 
 def map_blocks(schema):
-    print("manager-map_blocks")
     block_data = schema['blocks'].copy()
     block_map = dict()
     for block in block_data:
@@ -471,12 +458,9 @@ def map_blocks(schema):
             if element['type'] == 'Question':
                 block_map[element['questionId']] = block
 
-    print('printing block_map')
-    print(block_map)
     return block_map
 
 def embeddedData_mapper(instance, dictionary, skip_keys=None):
-    print("manager-embeddedData_mapper")
     dictionary_copy = dictionary.copy()
 
     drop_keys = []
@@ -504,7 +488,6 @@ def build_index(Survey, schema):
 
 
 def parse_response(index, column, entry):
-    print("manager-parse_response")
     response = datamodel.Response()
 
     # column is a respondnet field
@@ -554,13 +537,10 @@ def parse_response(index, column, entry):
         except:
             response.choice_id = entry
 
-    print('printing response')
-    print(response)
     return response
 
 
 def parse_responses(Survey, schema, data):
-    print("manager-parse_responses")
     index = build_index(Survey, schema)
 
     for responses in data:
@@ -574,6 +554,4 @@ def parse_responses(Survey, schema, data):
 
         Survey.respondents.append(respondent)
 
-    print('printing Survey')
-    print(Survey)
     return Survey
