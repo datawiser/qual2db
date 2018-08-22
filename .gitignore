@@ -1,4 +1,8 @@
 *.pyc
 *.sqlite
 *.db
-*.ini
+
+
+\.vs/
+
+temp/
