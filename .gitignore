@@ -31,7 +31,12 @@ databases/
 
 
 <<<<<<< refs/remotes/origin/test
+<<<<<<< refs/remotes/origin/test
 temp/
 >>>>>>> Scores are working
 =======
 >>>>>>> Added config.ini editor module
+=======
+
+temp/
+>>>>>>> Added datatables and layout changes
