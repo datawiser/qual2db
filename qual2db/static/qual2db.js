@@ -1,10 +1,12 @@
+var qualTable;
+
 $(document).ready(function () {
-    $('#qualtrics-table').DataTable( {
+    qualTable = $('#qualtrics-table').DataTable( {
         "scrollY": "75vh",
         "scrollCollapse": false,
         "paging": false,
         "searching": true,
-    } );
+    },);
 });
 
 $(document).ready(function () {
