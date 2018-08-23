@@ -2,9 +2,4 @@
 *.sqlite
 *.vs/*
 \.vs/
-
-
-
 temp/
-
-qual2db/databases/
