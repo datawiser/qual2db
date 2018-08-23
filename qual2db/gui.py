@@ -39,6 +39,7 @@ class Root(object):
         self.sm.connect()
 
         surveys = self.sm.listSurveys()
+ 
         surveys_in_db = self.sm.survey().qid.tolist()
 
         survey_row = Template(filename=os.path.join(DIR, 'templates/survey_row.html'))
@@ -46,25 +47,32 @@ class Root(object):
         page = Template(filename=os.path.join(DIR, 'templates/login.html'))
 
         in_db_rows = '' 
-        not_in_db_rows = '' 
+        not_in_db_rows = ''
+        rows = ''
 
         for s in surveys:
             if s[0] in surveys_in_db:
                 checked = 'checked'
-                survey = self.sm.query(Survey).filter(Survey.qid == s[0]).one()
+                survey = self.sm.getSurvey(s[0])
+                #survey = self.sm.query(Survey).filter(Survey.qid == s[0]).one()
                 qid = s[0]
-                name = survey.name
-                responses = str(len(survey.respondents))
-                questions = str(len(survey.questions))
-                size=int(responses)*int(questions)
-                active = survey.isActive
-                if active == '1':
-                    active = True
-                elif active == '0':
-                    return False
-                else:
-                    pass
-                in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked,) 
+                name = survey['name']
+                responses = survey['responseCounts']['auditable']
+                questions = str(len(survey['questions'])) 
+                size=int(questions)*int(responses)
+                active = survey['isActive']
+                #name = survey.name
+                #responses = str(len(survey.respondents))
+                #questions = str(len(survey.questions))
+                #size=int(responses)*int(questions)
+                #active = survey.isActive
+                #if active == '1':
+                #    active = True
+                #elif active == '0':
+                #    active = False
+                #else:
+                #    pass
+                in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked) 
 
             else:
                 checked = ''
@@ -75,10 +83,13 @@ class Root(object):
                 questions = str(len(survey['questions'])) 
                 size=int(questions)*int(responses)
                 active = survey['isActive']
+
                 not_in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked) 
 
+            rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked)
+
         self.sm.close()
-        return page.render(not_in_db_rows=not_in_db_rows, in_db_rows=in_db_rows) 
+        return page.render(rows=rows, in_db_rows = in_db_rows, not_in_db_rows = not_in_db_rows) 
 
     @cherrypy.expose
     def update(self, **qids):
