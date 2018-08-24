@@ -29,6 +29,7 @@ databases/
 =======
 \.vs/
 <<<<<<< refs/remotes/origin/test
+<<<<<<< refs/remotes/origin/test
 
 
 <<<<<<< refs/remotes/origin/test
@@ -54,3 +55,8 @@ temp/
 
 qual2db/databases/
 >>>>>>> Ready for merging
+=======
+temp/*
+
+qual2db/databases/*
+>>>>>>> edit .gitignore
