@@ -19,5 +19,5 @@ $(document).ready(function () {
 });
 
 function loadSpinner() {
-    document.getElementById('loader').style.display = "block";
+    document.getElementById('loader').style.display = "inline-block";
 }
