@@ -34,6 +34,12 @@ class Root(object):
         cherrypy.engine.exit()
 
     @cherrypy.expose
+    def get_databases(self,checkbox1):
+        databases = []
+        databases = checkbox1
+        return databases
+
+    @cherrypy.expose
     def index(self):
         print('gui-index')
         self.sm.connect()
@@ -50,14 +56,21 @@ class Root(object):
         not_in_db_rows = ''
         rows = ''
 
+
         for s in surveys:
+            print(s)
             survey = self.sm.getSurvey(s[0])
             qid = s[0]
             name = survey['name']
-            responses = survey['responseCounts']['auditable']
             questions = str(len(survey['questions'])) 
-            size=int(questions)*int(responses)
             active = survey['isActive']
+
+            if  'responseCounts' in survey:
+                responses = survey['responseCounts']['auditable']
+            else:
+                pass
+
+            size=int(questions)*int(responses)
 
             if s[0] in surveys_in_db:
                 checked = 'checked'
@@ -66,10 +79,11 @@ class Root(object):
                 checked = ''
                 not_in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked)
 
-            rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked)
+        rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked)
 
         self.sm.close()
-        return page.render(rows=rows, in_db_rows = in_db_rows, not_in_db_rows = not_in_db_rows) 
+        return page.render(rows=rows, in_db_rows = in_db_rows, not_in_db_rows = not_in_db_rows)
+    
         #for s in surveys:
         #    if s[0] in surveys_in_db:
         #        checked = 'checked'
