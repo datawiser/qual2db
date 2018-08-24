@@ -15,8 +15,12 @@ qual_creds = {
     'token':configurations['Qualtrics_Credentials']['Token']
     }
 
-sql_creds = {
-    'constr':configurations['SQL_Credentials']['constr']
+sqlite_creds = {
+    'constr':configurations['SQLite_Credentials']['constr']
+    }
+
+mysql_creds = {
+    'constr':configurations['MySQL_Credentials']['constr']
     }
 
 def main():
@@ -36,7 +40,7 @@ def main():
 
     # Create, configure and start application
     app = cherrypy.Application(
-        Root(constr=sql_creds['constr']), config=config)
+        Root(constr=sqlite_creds['constr']), config=config)
     cherrypy.quickstart(app, config=config)
 
 
