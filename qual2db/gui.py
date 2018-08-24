@@ -58,7 +58,6 @@ class Root(object):
 
 
         for s in surveys:
-            print(s)
             survey = self.sm.getSurvey(s[0])
             qid = s[0]
             name = survey['name']
