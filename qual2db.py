@@ -26,6 +26,7 @@ mysql_creds = {
 def main():
 
     config = {
+
         '/': {
             'tools.sessions.on': True
         },
@@ -34,13 +35,17 @@ def main():
             'tools.staticdir.root': DIR,
             'tools.staticdir.on': True,
             'tools.staticdir.dir': 'qual2db/static/'
-
-        }
+            }
     }
+
+    cherrypy.config.update({
+        'server.socket_host':'0.0.0.0',
+        'server.socket_port':1994
+        })
 
     # Create, configure and start application
     app = cherrypy.Application(
-        Root(constr=sqlite_creds['constr']), config=config)
+        Root(constr = sqlite_creds['constr']), config=config)
     cherrypy.quickstart(app, config=config)
 
 

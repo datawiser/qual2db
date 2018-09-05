@@ -5,6 +5,8 @@ import time
 import zipfile
 import os
 import configparser
+import mysql.connector 
+
 
 import pandas as pd
 import requests
@@ -83,7 +85,7 @@ embedded_data_names = []
 class DatabaseInterface:
 
     def __init__(self, constr, Base):
-        self.engine = create_engine(constr, pool_recycle=280)
+        self.engine = create_engine(constr,echo = True)
         Base.metadata.create_all(self.engine)
         self.SessionMaker = scoped_session(sessionmaker(bind=self.engine))
         self.__session = None
@@ -235,7 +237,7 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
 
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, constr=sqlite_creds['constr'], Base=Base):
+    def __init__(self, constr = sqlite_creds['constr'], Base=Base):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
@@ -542,9 +544,13 @@ def parse_response(index, column, entry):
 
 def parse_responses(Survey, schema, data):
     index = build_index(Survey, schema)
-
+    response_counter = 0
+    total_responses = len(data)
+   
     for responses in data:
         respondent = data_mapper(datamodel.Respondent(), responses)
+        response_counter += 1
+        print('parsing response '+ str(response_counter)+' out of ' + str(total_responses))
 
         for record in responses:
             response = parse_response(index, record, responses[record])
