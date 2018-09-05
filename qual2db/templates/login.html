@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Qual2db 3.0.X</title>
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!--JS-->
@@ -13,7 +13,7 @@
 
     <!--CSS-->
     <link rel="stylesheet" type="text/css" href="/static/style.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" />
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.18/css/dataTables.jqueryui.min.css" />
@@ -22,15 +22,22 @@
 
 </head>
 
+
 <body>
-    <header>Qual2db 3.0.x</header>
     <form method="post" action="update">
         <div class="container-fluid">
             <div class="w3-row-padding">
+                <!-- Nav Bar -->
+                <div class="topnav">
+                    <a class="active">Qual2db 3.1.0</a>
+                    <a href="https://calvin.edu/centers-institutes/center-for-social-research/">CSR</a>
+                    <a href="#contact">Contact</a>
+                </div>
+
                 <!-- In Qualtrics -->
                 <div class="w3-col w3-container s12 m12 l5">
                     <div class="w3-card w3-margin">
-                        <table id="qualtrics-table" class="display" style="width:100%">
+                        <table id="qualtrics-table" class="display compact" style="width:100%">
                             <thead>
                                 <tr>
                                     <th>Survey Name</th>
@@ -46,40 +53,16 @@
                 </div>
 
                 <!-- Menu Panel -->
-
                 <div class="w3-col w3-container s12 m12 l2">
-                        <div class="w3-card-4 w3-margin">
-                            <header class="w3-container w3-blue w3-center">
-                                <h3>Action Panel</h3>
-                            </header>
-                            <div class="w3-container w3-center">
-                                <button type="submit" onclick="loadSpinner()" class="pure-button pure-button-primary">Save</button>
-                                <div id="loader" style="display:none"></div>
-                            </div>
+                    <div class="w3-card-4 w3-margin">
+                        <header class="w3-container w3-blue w3-center">
+                            <h3>Action Panel</h3>
+                        </header>
+                        <div class="w3-container w3-center">
+                            <button type="submit" onclick="loadSpinner()" class="pure-button pure-button-primary">Save</button>
+                            <div id="loader" style="display:none"></div>
                         </div>
-
-                    <!--
-                        <div class="w3-card-4 w3-margin">
-                            <header class="w3-container w3-blue w3-center">
-                                <h3>Settings Panel</h3>
-                            </header>
-                            <div class="w3-container">
-                                <header class="w3-container w3-center">
-                                    <h4">Output Databases</h4">
-                                </header>
-                                <div class="w3-container">
-                                    <ul class="w3-ul">
-                                        <li><input class="w3-check" type="checkbox" id="1a" name="checkbox1"><label>SQLite</label></li>
-
-                                        <li><input class="w3-check" type="checkbox" id="1b"><label>MySQL</label></li>
-
-                                        <li><input class="w3-check" type="checkbox" id="1c" disabled><label>MSSQL (Disabled)</label></li>
-                                    </ul>
-                                    <button type="submit" class="pure-button pure-button-primary">Submit</button>
-                                </div>
-                            </div>
-                        </div>
-                    -->
+                    </div>
                 </div>
 
                 <!-- In SQL Database -->
@@ -99,6 +82,7 @@
                         </table>
                     </div>
                 </div>
+                <!-- -->
             </div>
         </div>
     </form>

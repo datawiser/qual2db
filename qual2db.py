@@ -37,10 +37,14 @@ def main():
 
         }
     }
-
+    # cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                            #'server.socket_port': 8888,
+                           #})
+	
     # Create, configure and start application
     app = cherrypy.Application(
         Root(constr=sqlite_creds['constr']), config=config)
+           
     cherrypy.quickstart(app, config=config)
 
 

@@ -114,18 +114,7 @@ Survey.questions = relationship('Question', order_by=Question.id, back_populates
 Block.questions = relationship('Question', order_by=Question.id, back_populates='block', cascade='save-update, merge, delete')
 
 
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
 class SubQuestion(Base):
-=======
-class Answer(Base):
->>>>>>> rename 'subquestion' to 'answer'
-=======
-class SubQuestion(Base):
-<<<<<<< HEAD
->>>>>>> Renamed all answers to subquestions except for those references that create labels the user will see.
-=======
->>>>>>> development
     __tablename__ = 'answer'
 
     id = Column(Integer, primary_key=True)
@@ -140,28 +129,7 @@ class SubQuestion(Base):
     question_id = Column(Integer, ForeignKey('question.id'))
     question = relationship(Question, back_populates='subquestions')
 
-<<<<<<< HEAD
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-Question.answers = relationship('Answer', order_by=Answer.id, back_populates='question', cascade='save-update, merge, delete')
-=======
 Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
->>>>>>> Cosmetic changes to datamodel.py and manager.py
-=======
-Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
->>>>>>> Renamed all answers to subquestions except for those references that create labels the user will see.
-=======
-Question.subquestions = relationship(
-    'SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
->>>>>>> Working version
-=======
-Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
->>>>>>> Temporary print statements
-=======
-Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
->>>>>>> development
 
 
 class Choice(Base):

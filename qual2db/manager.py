@@ -235,7 +235,7 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
 
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, constr=sqlite_creds['constr'], Base=Base):
+    def __init__(self, constr = sqlite_creds['constr'], Base=Base):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
@@ -365,30 +365,11 @@ def schema_mapper(Survey, schema):
         if question.qid not in embedded_data_names:
             data = schema_copy['questions'][question.qid]
 
-<<<<<<< HEAD
-<<<<<<< refs/remotes/origin/test
-        try:
-<<<<<<< refs/remotes/origin/test
-            question.subquestions = entity_mapper(
-                datamodel.subquestion, data['subQuestions'])
-=======
-            question.answers = entity_mapper(
-                datamodel.Answer, data['answer'])
->>>>>>> rename 'subquestion' to 'answer'
-        except:
-            pass
-=======
-=======
->>>>>>> development
             try:
                 question.subquestions = entity_mapper(datamodel.SubQuestion, data['subQuestions'])
                 #print("### line 324 subquestion entity mapper")
             except:
                 pass
-<<<<<<< HEAD
->>>>>>> Merged in all the advances in Master branch
-=======
->>>>>>> development
 
             try:
                 question.choices = entity_mapper(datamodel.Choice, data['choices'])
@@ -531,42 +512,9 @@ def parse_response(index, column, entry):
     response.question_id = question_id
 
     try:
-<<<<<<< HEAD
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-        subquestion_qid = index['exportColumnMap'][
-            column]['subQuestion'].split('.')[-1]
-        subquestion_id = index['subquestions'][
-            question_qid][int(subquestion_qid)].id
-        response.answer_id = subquestion_id
-=======
-        answer_qid = index['exportColumnMap'][
-            column]['answer'].split('.')[-1]
-        answer_id = index['answers'][
-            question_qid][int(answer_qid)].id
-        response.answer_id = answer_id
->>>>>>> rename 'subquestion' to 'answer'
-=======
-        subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
-        subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
-        response.subquestion_id = subquestion_id
->>>>>>> Cosmetic changes to datamodel.py and manager.py
-=======
-        subquestion_qid = index['exportColumnMap'][column]['answer'].split('.')[-1]
-        subquestio_id = index['subquestions'][question_qid][int(answer_qid)].id
-=======
-        subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
-        subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
->>>>>>> Working version
-        response.answer_id = subquestion_id
->>>>>>> Merged in all the advances in Master branch
-=======
         subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
         subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
         response.answer_id = subquestion_id
->>>>>>> development
     except:
         pass
 

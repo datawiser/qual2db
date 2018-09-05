@@ -26,7 +26,7 @@ def sqlite_name_generator(root=root1,name='test'):
 
 sections = {
     'SQLite':{'section':'SQLite_Credentials','constr':sqlite_name_generator()},
-    'MySQL':{'section':'MySQL_Credentials','constr':'hello'}
+    'MySQL':{'section':'MySQL_Credentials','constr':'mysql+pymysql://csr:ministryoffunnywalks@localhost:3307/qual2db3'}
     }
 
 def config_editor(databases=['SQLite']):
