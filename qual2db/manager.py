@@ -365,6 +365,7 @@ def schema_mapper(Survey, schema):
         if question.qid not in embedded_data_names:
             data = schema_copy['questions'][question.qid]
 
+<<<<<<< HEAD
 <<<<<<< refs/remotes/origin/test
         try:
 <<<<<<< refs/remotes/origin/test
@@ -377,12 +378,17 @@ def schema_mapper(Survey, schema):
         except:
             pass
 =======
+=======
+>>>>>>> development
             try:
                 question.subquestions = entity_mapper(datamodel.SubQuestion, data['subQuestions'])
                 #print("### line 324 subquestion entity mapper")
             except:
                 pass
+<<<<<<< HEAD
 >>>>>>> Merged in all the advances in Master branch
+=======
+>>>>>>> development
 
             try:
                 question.choices = entity_mapper(datamodel.Choice, data['choices'])
@@ -525,6 +531,7 @@ def parse_response(index, column, entry):
     response.question_id = question_id
 
     try:
+<<<<<<< HEAD
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
 <<<<<<< refs/remotes/origin/test
@@ -555,6 +562,11 @@ def parse_response(index, column, entry):
 >>>>>>> Working version
         response.answer_id = subquestion_id
 >>>>>>> Merged in all the advances in Master branch
+=======
+        subquestion_qid = index['exportColumnMap'][column]['subQuestion'].split('.')[-1]
+        subquestion_id = index['subquestions'][question_qid][int(subquestion_qid)].id
+        response.answer_id = subquestion_id
+>>>>>>> development
     except:
         pass
 

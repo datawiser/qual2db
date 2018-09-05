@@ -1,6 +1,7 @@
 *.pyc
 <<<<<<< refs/remotes/origin/test
 *.sqlite
+<<<<<<< HEAD
 <<<<<<< refs/remotes/origin/test
 *.db
 *.ini
@@ -60,3 +61,10 @@ temp/*
 
 qual2db/databases/*
 >>>>>>> edit .gitignore
+=======
+*.vs/*
+\.vs/
+temp/*
+
+qual2db/databases/*
+>>>>>>> development
