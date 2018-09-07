@@ -81,60 +81,30 @@ class Root(object):
         rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked)
 
         self.sm.close()
-        return page.render(rows=rows, in_db_rows = in_db_rows, not_in_db_rows = not_in_db_rows)
-    
-        #for s in surveys:
-        #    if s[0] in surveys_in_db:
-        #        checked = 'checked'
-        #        survey = self.sm.getSurvey(s[0])
-        #        #survey = self.sm.query(Survey).filter(Survey.qid == s[0]).one()
-        #        qid = s[0]
-        #        name = survey['name']
-        #        responses = survey['responseCounts']['auditable']
-        #        questions = str(len(survey['questions'])) 
-        #        size=int(questions)*int(responses)
-        #        active = survey['isActive']
-        #        #name = survey.name
-        #        #responses = str(len(survey.respondents))
-        #        #questions = str(len(survey.questions))
-        #        #size=int(responses)*int(questions)
-        #        #active = survey.isActive
-        #        #if active == '1':
-        #        #    active = True
-        #        #elif active == '0':
-        #        #    active = False
-        #        #else:
-        #        #    pass
-        #        in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked) 
-
-        #    else:
-        #        checked = ''
-        #        survey = self.sm.getSurvey(s[0])
-        #        qid = s[0]
-        #        name = survey['name']
-        #        responses = survey['responseCounts']['auditable']
-        #        questions = str(len(survey['questions'])) 
-        #        size=int(questions)*int(responses)
-        #        active = survey['isActive']
-
-        #        not_in_db_rows += survey_row.render(qid=qid, name=name, responses=responses, active=active, size=size, checked=checked) 
-
-            
+        return page.render(rows=rows, in_db_rows = in_db_rows, not_in_db_rows = not_in_db_rows)          
 
     @cherrypy.expose
     def update(self, **qids):
         print('gui-update')
+        
+        surveys = self.sm.listSurveys()
         surveys_in_db = self.sm.survey().qid.tolist()
+
         if qids:
             for qid in qids:
                 if qid in surveys_in_db:
                     pass
                 else:
+                    for s in surveys:
+                        if qid == s[0]:
+                            survey = self.sm.getSurvey(s[0])
+                            print(survey['name'])
                     self.sm.add_survey(qid)
             for qid in surveys_in_db:
                 if qid in qids:
                     pass
                 else:
+                    print("b")
                     s = self.sm.query(Survey).filter(Survey.qid == qid).one()
                     self.sm.delete(s)
                     self.sm.commit()

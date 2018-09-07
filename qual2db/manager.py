@@ -526,20 +526,21 @@ def parse_response(index, column, entry):
 def parse_responses(Survey, schema, data):
     index = build_index(Survey, schema)
 
-    r = 1 + len(data)
+    a = len(data)
+    b = len(data[00])
 
-    for i in range(r):
-        for responses in data:
-            print("Parsing response {0} of {1}".format(i,r) )
-            respondent = data_mapper(datamodel.Respondent(), responses)
+    for responses in data:
+        print("PARSING RESPONSE {0} OF {1}".format(data.index(responses) + 1,a))
+        respondent = data_mapper(datamodel.Respondent(), responses)
 
-            for record in responses:
-                print("Parsing {0} for reponse {1}".format(record,i))
+        c = 1
+        for record in responses:
+            print("Parsing question {0} of {1}".format(c,b))
 
-                response = parse_response(index, record, responses[record])
-                if response:
-                    respondent.responses.append(response)
-
-            Survey.respondents.append(respondent)
+            response = parse_response(index, record, responses[record])
+            if response:
+                respondent.responses.append(response)
+            c += 1
+    Survey.respondents.append(respondent)
 
     return Survey
