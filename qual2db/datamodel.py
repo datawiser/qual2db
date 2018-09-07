@@ -131,7 +131,6 @@ class SubQuestion(Base):
 
 Question.subquestions = relationship('SubQuestion', order_by=SubQuestion.id, back_populates='question', cascade='save-update, merge, delete')
 
-
 class Choice(Base):
     __tablename__ = 'choice'
 
@@ -148,19 +147,6 @@ class Choice(Base):
     question = relationship(Question, back_populates='choices')
 
 Question.choices = relationship('Choice', order_by=Choice.id, back_populates='question', cascade='save-update, merge, delete')
-
-
-#class EmbeddedData(Base):
-#    __tablename__ = 'embedded_data'
-
-#    id = Column(Integer, primary_key=True)
-#    #name = Column(String(length=50))
-#    #defaultValue = Column(sqlalchemy.UnicodeText())
-
-#    survey_id = Column(Integer, ForeignKey('survey.id'))
-#    survey = relationship(Survey, back_populates='embedded_data')
-
-#Survey.embedded_data = relationship('EmbeddedData', order_by=EmbeddedData.id, back_populates='survey', cascade='save-update, merge, delete')
 
 
 class Respondent(Base):
@@ -202,10 +188,8 @@ class Response(Base):
     question_id = Column(Integer)
     answer_id = Column(Integer)
     choice_id = Column(Integer)
-    #embeddeddata_id = Column(Integer)
 
     respondent_id = Column(Integer, ForeignKey('respondent.id'))
     respondent = relationship(Respondent, back_populates='responses')
 
-Respondent.responses = relationship(
-    'Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')
+Respondent.responses = relationship('Response', order_by=Response.id, back_populates='respondent', cascade='save-update, merge, delete')

@@ -222,7 +222,6 @@ class QualtricsInterface:
         download_call = 'responseexports/' + export_id + '/file'
         download_path = self.api_request(call=download_call, method='GET', export=True, debug=debug)
 
-        #data_file = download_path + '\\' + os.listdir(download_path)[0]
         data_file = os.path.join(download_path, os.listdir(download_path)[0])
 
         data = open(data_file, 'r', encoding = 'utf-8')
@@ -278,13 +277,13 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
                 else:
                     keys_data.append(key)
   
-        data_names = []
-        data_names = (list(set(keys_data) - set(keys_schema) - set(default_respondent_fields))) # Use a more specific name instead of data_names (data_names_not_in_schema?)
+        unaccounted_fields = []
+        unaccounted_fields = (list(set(keys_data) - set(keys_schema) - set(default_respondent_fields))) 
 
-        for i in data_names:
+        for i in unaccounted_fields:
             embedded_data_names.append(i)
       
-        for i in data_names:
+        for i in unaccounted_fields:
             schema['embeddedData'].append({'name':i})
         
         survey = datamodel.Survey()
@@ -297,8 +296,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         self.add(survey)
         self.commit()
 
-        print('printing survey')
-        print(survey)
         return survey    
     
     def add_schema(self, qid):
@@ -318,8 +315,6 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
         """Adds the data to the database."""
         self.connect()
         survey = self.query(datamodel.Survey).filter(datamodel.Survey.qid == qid).first()
-        # if not embedded_data_names:
-        #embedded_data_names = self.query(datamodel.Question).filter(datamodel.Question.survey_id == survey.id, datamodel.Question.type == "ED").distinct()
         schema = self.getSurvey(qid)
         schema_copy = schema['embeddedData']
         for data_row in schema_copy:
@@ -361,19 +356,16 @@ def schema_mapper(Survey, schema):
 
     # add the choices and subquestions to each question
     for question in Survey.questions:
-        # question.parse_question_text()
         if question.qid not in embedded_data_names:
             data = schema_copy['questions'][question.qid]
 
             try:
                 question.subquestions = entity_mapper(datamodel.SubQuestion, data['subQuestions'])
-                #print("### line 324 subquestion entity mapper")
             except:
                 pass
 
             try:
                 question.choices = entity_mapper(datamodel.Choice, data['choices'])
-                #print("*** line 330 subquestion entity mapper")
             except:
                 pass
 
@@ -490,17 +482,8 @@ def build_index(Survey, schema):
 def parse_response(index, column, entry):
     response = datamodel.Response()
 
-    # column is a respondnet field
     if column in default_respondent_fields:
         return False
-
-    # column is embedded data
-    #elif column in index['embedded_data']:
-    #    response.embedded_data_id = embedded_data_id = index['embedded_data'][column].id
-    #    response.textEntry = entry
-    #    return response
-
-    # This is the part that adds embedded_data_names to responses table and adds the entry
     elif column in embedded_data_names:
         response.question_id = index['questions'][column].id
         response.textEntry = entry
@@ -543,15 +526,20 @@ def parse_response(index, column, entry):
 def parse_responses(Survey, schema, data):
     index = build_index(Survey, schema)
 
-    for responses in data:
-        respondent = data_mapper(datamodel.Respondent(), responses)
+    r = 1 + len(data)
 
-        for record in responses:
-            response = parse_response(index, record, responses[record])
-            if response:
-                # Populate survey_id column with corresponding survey db id by querying and matching on the qid
-                respondent.responses.append(response)
+    for i in range(r):
+        for responses in data:
+            print("Parsing response {0} of {1}".format(i,r) )
+            respondent = data_mapper(datamodel.Respondent(), responses)
 
-        Survey.respondents.append(respondent)
+            for record in responses:
+                print("Parsing {0} for reponse {1}".format(record,i))
+
+                response = parse_response(index, record, responses[record])
+                if response:
+                    respondent.responses.append(response)
+
+            Survey.respondents.append(respondent)
 
     return Survey
