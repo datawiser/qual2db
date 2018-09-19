@@ -20,13 +20,13 @@ def sqlite_name_generator(root=root1,name='test'):
     now = datetime.datetime.now()
     name = r'\qual2db\databases\test'
     date_time = now.strftime("%Y_%m_%d_%H_%M_%S")
-    constr = r'sqlite:///'+ root + name + date_time + '.db?check_same_thread=False'
+    constr = r'sqlite:///'+ root + name + date_time + '.db?check_same_thread=False?charset=utf8'
 
     return(constr)
 
 sections = {
     'SQLite':{'section':'SQLite_Credentials','constr':sqlite_name_generator()},
-    'MySQL':{'section':'MySQL_Credentials','constr':'mysql+pymysql://csr:ministryoffunnywalks@localhost:3307/qual2db3'}
+    'MySQL':{'section':'MySQL_Credentials','constr':'mysql+pymysql://csr:ministryoffunnywalks@upshot.calvin.edu/csr_qual2db_3'}
     }
 
 def config_editor(databases=['SQLite']):

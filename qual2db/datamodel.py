@@ -1,6 +1,7 @@
 """
 datamodel.py
 """
+import lxml 
 from bs4 import BeautifulSoup
 
 import sqlalchemy
@@ -66,13 +67,6 @@ class Survey(Base):
                 subquestions[question.qid][subquestion.qid] = subquestion
 
         return subquestions
-
-    #def get_embedded_data(self):
-    #    embedded_data = dict()
-    #    for embedded_data in self.embedded_data:
-    #        embedded_data[embedded_data.name] = embedded_data
-
-    #    return embedded_data
 
 
 class Block(Base):

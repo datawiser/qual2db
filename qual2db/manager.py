@@ -83,7 +83,7 @@ embedded_data_names = []
 class DatabaseInterface:
 
     def __init__(self, constr, Base):
-        self.engine = create_engine(constr, pool_recycle=280)
+        self.engine = create_engine(constr, pool_recycle=3000)
         Base.metadata.create_all(self.engine)
         self.SessionMaker = scoped_session(sessionmaker(bind=self.engine))
         self.__session = None
@@ -234,7 +234,7 @@ class SurveyManager(DatabaseInterface, QualtricsInterface):
 
     """Interface for working with sqlalchemy, sqlite3, and data classes"""
 
-    def __init__(self, constr = sqlite_creds['constr'], Base=Base):
+    def __init__(self, constr = mysql_creds['constr'], Base=Base):
         DatabaseInterface.__init__(self, constr, Base)
         QualtricsInterface.__init__(self)
 
@@ -530,17 +530,18 @@ def parse_responses(Survey, schema, data):
     b = len(data[00])
 
     for responses in data:
-        print("PARSING RESPONSE {0} OF {1}".format(data.index(responses) + 1,a))
         respondent = data_mapper(datamodel.Respondent(), responses)
 
+        print("PARSING RESPONSE {0} OF {1}".format(data.index(responses) + 1,a))
         c = 1
-        for record in responses:
-            print("Parsing question {0} of {1}".format(c,b))
 
+        for record in responses:
             response = parse_response(index, record, responses[record])
             if response:
                 respondent.responses.append(response)
+
+            print("Parsing question {0} of {1}".format(c,b))
             c += 1
-    Survey.respondents.append(respondent)
+        Survey.respondents.append(respondent)
 
     return Survey

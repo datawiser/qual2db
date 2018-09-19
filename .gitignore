@@ -1,70 +1,9 @@
 *.pyc
-<<<<<<< refs/remotes/origin/test
 *.sqlite
-<<<<<<< HEAD
-<<<<<<< refs/remotes/origin/test
 *.db
-*.ini
-<<<<<<< refs/remotes/origin/test
-\.vs/*
-temp/*
-=======
-config.ini
->>>>>>> Created requirements.txt, updated .gitignore
-=======
-=======
->>>>>>> Temporary print statements
-*.vs/*
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-temp/*
->>>>>>> Update gitignore
-=======
-temp/
 \.vs/
-<<<<<<< refs/remotes/origin/test
->>>>>>> Changes to .gitignore and config.
-=======
-databases/
->>>>>>> Edit gitignore and databases
-=======
-\.vs/
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-
-
-<<<<<<< refs/remotes/origin/test
-<<<<<<< refs/remotes/origin/test
-temp/
->>>>>>> Scores are working
-=======
->>>>>>> Added config.ini editor module
-=======
-
-temp/
-<<<<<<< refs/remotes/origin/test
->>>>>>> Added datatables and layout changes
-=======
-
-qual2db/databases/
->>>>>>> Bool not iterable problem
-=======
-temp/
-<<<<<<< refs/remotes/origin/test
->>>>>>> Deleted and updated
-=======
-
-qual2db/databases/
->>>>>>> Ready for merging
-=======
 temp/*
-
-qual2db/databases/*
->>>>>>> edit .gitignore
-=======
 *.vs/*
 \.vs/
 temp/*
-
 qual2db/databases/*
->>>>>>> development
