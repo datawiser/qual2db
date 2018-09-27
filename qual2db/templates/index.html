@@ -1,0 +1,108 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Qual2db 3.1.X</title>
+    <link rel="icon" href="../static/media/qual2db-logo.png" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!--JS-->
+
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/javascript" src="../static/js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="../static/js/tether.min.js"></script>
+    <script type="text/javascript" src="../static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../static/DataTables/datatables.min.js"></script>
+    <script type="text/javascript" src="../static/js/qual2db.js"></script>
+
+    <!--CSS-->
+    <link rel="stylesheet" type="text/css" href="../static/css/tether.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="../static/DataTables/datatables.min.css" />
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+    <link rel="stylesheet" type="text/css" href="https://www.w3schools.com/w3css/4/w3.css">
+
+</head>
+
+<body>
+	<div class="container-fluid">
+        <div class="w3-row-padding">
+            <!-- Nav Bar -->
+            <div class="topnav">
+                <a class="active"><img id="logo" src="../static/media/qual2db-logo.png" height="35" width="80" /></a>
+                <a href="https://calvin.edu/centers-institutes/center-for-social-research/">CSR</a>
+                <a href="#contact">Contact</a>
+            </div>
+
+            <!-- Qualtrics Table-->
+            <div class="w3-col w3-container s12 m12 l5">
+                <div class="w3-card w3-margin">
+                    <div class="table-title">
+                        <span style="color:white">
+                            <h4>Qualtrics Surveys</h4>
+                        </span>
+                    </div>
+                    <table class="display" id="qualtrics-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Check</th>
+                                <th>Survey name</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Menu Panel -->
+            <div class="w3-col w3-container s12 m12 l2">
+                <div class="w3-card-4 w3-margin">
+                    <header class="w3-container w3-blue w3-center">
+                        <h3>Action Panel</h3>
+                    </header>
+                    <div class="w3-container w3-center">
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="SyncAll()" id="syncall">Add</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="Schema()">Schema</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="Data()">Data</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary action-button" onClick="Remove()">Remove</button>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary action-button" onclick="Clear()">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SQL Table -->
+            <div class="w3-col w3-container s12 m12 l5">
+                <div class="w3-card w3-margin">
+                    <div class="table-title">
+                        <span style="color:white">
+                            <h4>SQL Surveys</h4>
+                        </span>
+                    </div>
+                    <table class="display" id="sql-table" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Check</th>
+                                <th>Survey name</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
